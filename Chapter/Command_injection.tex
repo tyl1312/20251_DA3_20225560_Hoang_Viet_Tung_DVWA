@@ -1,0 +1,161 @@
+\subsection{Overview}
+\noindent Command injection is an attack in which the goal is execution of arbitrary commands on the host operating system via a vulnerable application. Command injection attacks are possible when an application passes unsafe user supplied data (forms, cookies, HTTP headers etc.) to a system shell. In this attack, the attacker-supplied operating system commands are usually executed with the privileges of the vulnerable application. Command injection attacks are possible largely due to insufficient input validation.
+
+\noindent \textbf{Objective:} Execute an arbitrary command on the operating system
+
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'Submit' ]  ) ) {
+    // Get input
+    $target = $_REQUEST[ 'ip' ];
+
+    // Determine OS and execute the ping command.
+    if( stristr( php_uname( 's' ), 'Windows NT' ) ) {
+        // Windows
+        $cmd = shell_exec( 'ping  ' . $target );
+    }
+    else {
+        // *nix
+        $cmd = shell_exec( 'ping  -c 4 ' . $target );
+    }
+
+    // Feedback for the end user
+    echo "<pre>{$cmd}</pre>";
+}
+?>
+\end{lstlisting}
+\noindent The script runs when the user clicks the Submit button on a form. It takes the user input in the ip field and stores it in \$target. Next, the application runs php\_uname('s') function to determine the operating system name on which it is currently running. If on Windows systems, it use shell\_exec() function to run a system command, in this scenario, ping using the Windows command format, otherwise, it executes "ping -c 4", which sends exactly four ping packets. The result is stored in \$cmd and then displayed back to user using echo "<pre>{\$cmd}</pre>", where the <pre> tag preserves the formatting of the command line output for better readability. This code is vulnerable to command injection because it directly inserts user input into a system command without any validation or sanitization.
+
+\noindent Since our DVWA runs on Ubuntu (a Linux operating system), when we enter an IP address, it will run the command "ping -c 4 <ip\_address>". As a result, in order to inject new command, we need to know how to execute multiple command in a single line. In linux, there are several ways to achieve that such as using ; or \&\& after the first command which is the ping command in this scenario. To be more detailed, we will input "127.0.0.1; ls" which will turn into "ping 127.0.0.1; ls
+
+\subsubsection{Patching}
+\begin{lstlisting}
+<?php
+if (isset($_POST['Submit'])) {
+
+    // Get and trim input
+    $target = trim($_REQUEST['ip']);
+
+    // Validate input as a legitimate IP address
+    if (!filter_var($target, FILTER_VALIDATE_IP)) {
+        die('Invalid IP address');
+    }
+
+    // Determine OS and execute the ping command safely
+    if (stristr(php_uname('s'), 'Windows NT')) {
+        // Windows
+        $cmd = shell_exec('ping ' . escapeshellarg($target));
+    } else {
+        // *nix
+        $cmd = shell_exec('ping -c 4 ' . escapeshellarg($target));
+    }
+
+    // Feedback for the end user
+    echo "<pre>{$cmd}</pre>";
+}
+?>
+\end{lstlisting}
+\noindent To mitigate the command injection vulnerability here, we will use PHP’s built-in function filter\_var() with the FILTER\_VALIDATE\_IP filter is used. This function checks whether the input is a valid IPv4 or IPv6 address and rejects any input that does not match the allowed IP address format. Moreover, escapeshellarg() is also used to safely escape the validated input before it is passed to the shell, ensuring it is treated strictly as a command argument and providing an additional layer of protection. For example, with escapeshellarg(), malicious input "127.0.0.1 ; ls" will transform into "ping -c 4 '127.0.0.1 ; ls'", causing the command to fail safely. In conclusion, combining strict input validation with proper argument escaping effectively prevents command injection attacks in this implementation.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/com_res_low.png} 
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'Submit' ]  ) ) {
+    // Get input
+    $target = $_REQUEST[ 'ip' ];
+
+    // Set blacklist
+    $substitutions = array(
+        '&&' => '',
+        ';'  => '',
+    );
+
+    // Remove any of the characters in the array (blacklist).
+    $target = str_replace( array_keys( $substitutions ), $substitutions, $target );
+
+    // Determine OS and execute the ping command.
+    if( stristr( php_uname( 's' ), 'Windows NT' ) ) {
+        // Windows
+        $cmd = shell_exec( 'ping  ' . $target );
+    }
+    else {
+        // *nix
+        $cmd = shell_exec( 'ping  -c 4 ' . $target );
+    }
+
+    // Feedback for the end user
+    echo "<pre>{$cmd}</pre>";
+}
+?>
+\end{lstlisting}
+\noindent The medium level code functions in a similar way to its previous version but introduces a basic security mechanism. Before the user input stored in \$target is used, the application defines an array named \$substitutions, which specifies a set of blacklisted characters including ; and \&\& and their corresponding replacement values: empty strings. This array is then passed to the str\_replace() function, allowing the application to scan the user input and replace each matched sequence with the corresponding value.
+
+\noindent For example, if we use our payload for low level version "127.0.0.1 ; ls" here, the application will replace ";" with empty strings make the command become "ping -c 4 127.0.0.1 ls" causing both ping and injected command failed.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/command_med2.png} 
+\end{figure}
+
+\noindent However, this blacklist mechanism is insufficient, as Linux and other Unix-like systems provide alternative operators that can still be abused for command injection, such as the pipe operator (|). The pipe allows the output of one command to be passed as input to another; although in this specific case a command like ls does not consume standard input and therefore ignores the piped data, it will still execute normally.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/com_res_med.png} 
+\end{figure}
+
+\subsubsection{Patching}
+\noindent To prevent command injection at the medium security level, the same patching approach used in the previous level is applied, as there are no significant changes in the overall program logic.
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'Submit' ]  ) ) {
+    // Get input
+    $target = trim($_REQUEST[ 'ip' ]);
+
+    // Set blacklist
+    $substitutions = array(
+        '||' => '',
+        '&'  => '',
+        ';'  => '',
+        '| ' => '',
+        '-'  => '',
+        '$'  => '',
+        '('  => '',
+        ')'  => '',
+        '`'  => '',
+    );
+
+    // Remove any of the characters in the array (blacklist).
+    $target = str_replace( array_keys( $substitutions ), $substitutions, $target );
+
+    // Determine OS and execute the ping command.
+    if( stristr( php_uname( 's' ), 'Windows NT' ) ) {
+        // Windows
+        $cmd = shell_exec( 'ping  ' . $target );
+    }
+    else {
+        // *nix
+        $cmd = shell_exec( 'ping  -c 4 ' . $target );
+    }
+
+    // Feedback for the end user
+    echo "<pre>{$cmd}</pre>";
+}
+?>
+\end{lstlisting}
+\noindent There is no significant change in the overall code flow, with only change is upgraded blacklist and a simple input sanitization. Firstly, when the user clicks the Submit button, the retrieved value is applied trim() to remove any extra spaces at the beginning or end of the input. Moreover, a much more extensive blacklist has been set up. Now more characters will be replaced with space including pipe from medium level. However, if we look more closely, we would realize that the pipe is only replaced if there is a space after it. However, in linux, the pipe, which is an operator, is still recognized even without spaces. As a result, we can try input "127.0.0.1 |ls" which will turn into "ping -c 4 127.0.0.1 |ls"  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/com_res_high.png} 
+\end{figure}
+
+\subsubsection{Patching}
+
+\noindent For the high security level, the previously applied patching strategy is retained, since the application only introduces change in the blacklist instead of the program logic. As such, strict input validation and proper argument escaping remain effective in mitigating command injection vulnerabilities.

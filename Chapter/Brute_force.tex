@@ -1,0 +1,141 @@
+\subsection{Overview}
+A brute force attack uses trial-and-error to guess login info, encryption keys, or find a hidden web page. Hackers work through all possible combinations hoping to guess correctly. This is an old attack method, but it's still effective and popular with hackers. Because depending on the length and complexity of the password, cracking it can take anywhere from a few seconds to many years.
+
+\noindent \textbf{Objective}: Find out password of username admin
+
+\newpage
+\subsection{Low and medium level}
+
+After we click "View help", it is said that the only difference is extra two second wait for incorrect login. Therefore, we will combine the methods used for both levels.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/brute1.png}
+\end{figure}
+
+\begin{lstlisting}
+<?php
+if( isset( $_GET[ 'Login' ] ) ) {
+    // Get username
+    $user = $_GET[ 'username' ];
+
+    // Get password
+    $pass = $_GET[ 'password' ];
+    $pass = md5( $pass );
+
+    // Check the database
+    $query  = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
+    $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+    if( $result && mysqli_num_rows( $result ) == 1 ) {
+        // Get users details
+        $row    = mysqli_fetch_assoc( $result );
+        $avatar = $row["avatar"];
+
+        // Login successful
+        echo "<p>Welcome to the password protected area {$user}</p>";
+        echo "<img src=\"{$avatar}\" />";
+    }
+    else {
+        // Login failed
+        echo "<pre><br />Username and/or password incorrect.</pre>";
+    }
+
+    ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+}
+?>
+\end{lstlisting}
+\noindent This code represents a website login process. The condition if (isset(\$\_GET['Login'])) checks whether the login form has been submitted; \$\_GET is a special PHP array that stores data sent through the URL using the HTTP GET method, and isset() ensures the login logic only runs after the user clicks the login button. It then takes the entered username and password, then hashes the password using a MD5 hash function which produces a fixed 128-bit hash value. The code then stores these values in variable \$user and \$pass respectively. Next, the script prepares a SQL query asking the database to return all columns from the users table where both the username and the hashed password match the user input. The function mysqli\_query() then sends this SQL query to the database server. If the query fails, the script is immediately stopped and a database error message is displayed.
+
+\noindent Otherwise, if exactly one matching user is found, the system retrieves the user’s information, shows the user’s avatar image, and displays a welcome message. On the other hand, the system shows an error message saying the username or password is incorrect.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/brute10.png} 
+\end{figure}
+
+\noindent Then, we send this request to Burp Intruder, a tool for automating customized attacks against web applications which enables you to configure attacks that send the same HTTP request over and over again, inserting different payloads into predefined positions each time. Here, we will add the \$ sign at the front and behind the password parameter representing the payload position. Moreover, since there is only one payload, we will choose the Sniper type attack. In the payload part, we will paste a list of passwords that will be used which contains the correct password as well (in this scenario is "password"). Then we press "Start attack"
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.2\textheight]{Figure/brute3.png} 
+\end{figure}
+\noindent As you can see, the attempt with "password" is the only with different length with others, implying that "password" is the correct password for username "user"
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_GET[ 'Login' ] ) ) {
+    // Check Anti-CSRF token
+    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+
+    // Sanitise username input
+    $user = $_GET[ 'username' ];
+    $user = stripslashes( $user );
+    $user = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ?
+        mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $user ) :
+        ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+
+    // Sanitize password input
+    $pass = $_GET[ 'password' ];
+    $pass = stripslashes( $pass );
+    $pass = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ?
+        mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass ) :
+        ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+    $pass = md5( $pass );
+
+    // Check database
+    $query  = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
+    $result = mysqli_query($GLOBALS["___mysqli_ston"], $query ) or die('<pre>' . mysqli_error($GLOBALS["___mysqli_ston"]) . '</pre>');
+
+    if( $result && mysqli_num_rows( $result ) == 1 ) {
+        $row    = mysqli_fetch_assoc( $result );
+        $avatar = $row["avatar"];
+
+        echo "<p>Welcome to the password protected area {$user}</p>";
+        echo "<img src=\"{$avatar}\" />";
+    }
+    else {
+        sleep( rand( 0, 3 ) );
+        echo "<pre><br />Username and/or password incorrect.</pre>";
+    }
+
+    mysqli_close($GLOBALS["___mysqli_ston"]);
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?>
+\end{lstlisting}
+
+\noindent This login script follows the same overall authentication flow as the previous level: it checks whether the login button was clicked, retrieves the username and password from user input, hashes the password, queries the database for a matching record, and either grants or denies access based on the query result. However, this version introduces several additional security mechanisms.
+
+\noindent The most important new feature is the addition of anti CSRF (Cross-Site Request Forgery) protection. The line "checkToken(\$\_REQUEST['user\_token'], \$\_SESSION['session\_token'], 'index.php');" checks whether the token sent by the user matches the token stored on the server. If they do not match, the request is rejected and the user is redirected back to the login page. This helps prevent attackers from tricking users into submitting hidden login requests.
+
+\noindent Another notable difference is that the application now applies multiple sanitization steps to both fields. First, stripslashes() function removes backslashes that may appear in user input. For example, if the input is \texttt{O\'Reilly}, stripslashes() converts it to O'Reilly, helping normalize the input. Next, mysqli\_real\_escape\_string() escapes special characters before the input is used in an SQL query. For example, the input "admin' OR '1'='1" becomes \texttt{"admin\' OR \'1\'=\'1"}, preventing the injected SQL code from breaking out of the query string. This helps mitigate SQL injection by ensuring the input is treated as data rather than executable SQL.
+
+\noindent Moreover, a random delay on failed login attempts is introduced. The statement sleep(rand(0, 3)); pauses execution for a random amount of time between 0 and 3 seconds when authentication fails. This technique helps mitigate brute force attacks to some extent by slowing down repeated login attempts, making automated guessing less efficient.
+
+\noindent Finally, generateSessionToken() creates a new Anti-CSRF token for future requests. This ensures that each session maintains a valid and up-to-date token, reinforcing the CSRF protection mechanism.
+
+\noindent To solve this level, we need to find a way to extract token value to add it in our next request. Luckily, Burp Intruder has a solution for that. Since there are 2 payloads position now, we will change to Pitchfork attack. For password position, the payload would be the same as the previous levels while for user\_token we will use a different type of payloads called grep extract which enables us to solve the aforementioned problems. 
+
+\noindent In the Settings page, we need to define pattern that matches "user\_token" from the response while also settings redirection to always to simulate the whole login process automatically
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/brute_high1.png} 
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/brute_high2.png} 
+\end{figure}
+
+\noindent As you can see from the second attempt, all of them are attached with a second payload which is the value of user\_token from previous response. And once again, password is the only attempt with both different length and attached with token, indicating that this is the password for user admin
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.2\textheight]{Figure/brute_high3.png} 
+\end{figure}

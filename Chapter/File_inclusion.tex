@@ -1,0 +1,71 @@
+\subsection{Overview}
+The File Inclusion vulnerability allows an attacker to include a file, usually exploiting a “dynamic file inclusion” mechanism implemented in the target application. The vulnerability occurs due to the use of user-supplied input without proper validation. 
+
+\noindent Local File Inclusion (LFI) is the process of including files that are already present on the server through exploitation of vulnerable inclusion procedures implemented in the application. For example, this vulnerability occurs when a page receives input that is a path to a local file. This input is not properly sanitized, allowing directory traversal characters to be injected.
+
+\noindent Remote File Inclusion (RFI) is the process of including files from remote sources through exploitation of vulnerable inclusion procedures implemented in the application. For example, this vulnerability occurs when a page receives input that is the URL to a remote file. This input is not properly sanitized, allowing external URLs to be injected.
+
+\noindent In both cases, although most examples point to vulnerable PHP scripts, we should keep in mind that it is also common in other technologies such as JSP, ASP, etc.
+
+\noindent \textbf{Objective:} Read all five famous quotes from '../hackable/flags/fi.php' using only the file inclusion.
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+
+// The page we wish to display
+$file = $_GET[ 'page' ];
+
+?>
+\end{lstlisting}
+\noindent In the low-level version, the code retrieves the value of the page parameter from the URL using the GET method and assigns it to the \$file variable, which is then used to load and display a file on the web page. However, because no sanitization or validation is applied, an attacker can manipulate the page parameter to access arbitrary files on the server.
+
+\noindent In this scenario, we know that the target file is located at /DVWA/hackable/flags. Currently, we are in the directory /DVWA/vulnerabilities/fi. To navigate to the target file, we need to move up two directories from the current location which can be done using ../ to move one directory up. So, starting from /DVWA/vulnerabilities/fi, to move up two levels and access /DVWA/hackable/flags, the relative path would be "../../hackable/flags/fi.php"
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/fi_res_low.png} 
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+
+// The page we wish to display
+$file = $_GET[ 'page' ];
+
+// Input validation
+$file = str_replace( array( "http://", "https://" ), "", $file );
+$file = str_replace( array( "../", "..\\" ), "", $file );
+
+?>
+\end{lstlisting}
+\noindent The application now adds basic input validation before the page is loaded. The code removes http:// and https:// to prevent loading external resources, and strips ../ and ..\verb|\\| to block directory traversal attempts. However, if we use ..././, the ../ in the middle is replaced with a blank space, and the remaining values collapse to ../, allowing us to navigate using this approach. Therefore, our payload changes from "../../hackable/flags/fi.php" to "..././..././hackable/flags/fi.php"
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/fi_res_med.png} 
+\end{figure}
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+// The page we wish to display
+$file = $_GET[ 'page' ];
+
+// Input validation
+if( !fnmatch( "file*", $file ) && $file != "include.php" ) {
+    // This isn't the page we want!
+    echo "ERROR: File not found!";
+    exit;
+}
+
+?>
+\end{lstlisting}
+\noindent For high level, instead of removing dangerous characters, it checks whether the requested file name matches an allowed pattern, specifically, files that start with file or is exactly "include.php". If the requested value does not meet these conditions, the code displays an error message and immediately exits. However, on Linux systems, the file protocol file:/// can be used to reference local files directly. By leveraging this protocol, an attacker may bypass the input validation and access local files on the server. For example, using file:///var/www/html/DVWA/hackable/flags/fi.php allows the requested file to be loaded directly from the filesystem, effectively bypassing the intended restriction.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/fi_res_high.png} 
+\end{figure}

@@ -1,0 +1,109 @@
+\subsection{Overview}
+Authorization bypass is a type of security vulnerability where an attacker gains access to resources, functionality, or data they should not be authorized to access. It happens when an application fails to properly enforce access controls on user actions or objects.
+
+\noindent \textbf{Objective:} View Authorization Bypass page as user gordonb/abc123
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting} 
+<?php
+/*
+
+Nothing to see here for this vulnerability, have a look
+instead at the dvwaHtmlEcho function in:
+
+* dvwa/includes/dvwaPage.inc.php
+
+*/
+
+?>
+\end{lstlisting}
+\noindent This source file does not contain any application logic related to the vulnerability itself. Instead, it explicitly indicates that the relevant behavior is implemented elsewhere, specifically in the dvwaHtmlEcho function located in dvwa/includes/dvwaPage.inc.php.
+
+\noindent First, we will log out of the admin account and log in as user gordonb. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth1.png} 
+\end{figure}
+\noindent We can instantly notice that as gordonb, we don't have Authorization Bypass page. However, since we know that the page is located at "http://192.168.54.6/DVWA/vulnerabilities/authbypass/", we can try accessing as gordonb.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth2.png} 
+\end{figure}
+\noindent Here, we can see that we still have access to the page.
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+/*
+
+Only the admin user is allowed to access this page.
+
+Have a look at these two files for possible vulnerabilities: 
+
+* vulnerabilities/authbypass/get_user_data.php
+* vulnerabilities/authbypass/change_user_details.php
+
+*/
+
+if (dvwaCurrentUser() != "admin") {
+    print "Unauthorised";
+    http_response_code(403);
+    exit;
+}
+?>
+\end{lstlisting}
+\noindent Looking at the code, we notice that the page is now restricted to only admin user now. Any non-admin user trying to access the web page will get an "Unauthorised" message. However, the application suggests we visit two URL: vulnerabilities/authbypass/get\_user\_data.php and vulnerabilities/authbypass/change\_user\_details.php. After trying to access the former, we find out that now we can view user details but in JSON format. This suggests that user gordonb can still view user data despite not having authorisation
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth_med2.png} 
+\end{figure}
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+/*
+
+Only the admin user is allowed to access this page.
+
+Have a look at this file for possible vulnerabilities: 
+
+* vulnerabilities/authbypass/change_user_details.php
+
+*/
+
+if (dvwaCurrentUser() != "admin") {
+    print "Unauthorised";
+    http_response_code(403);
+    exit;
+}
+?>
+\end{lstlisting}
+\noindent The source code doesn't change much for this level but when we try to access vulnerabilities/authbypass/get\_user\_data.php, it returns "Access denied" message. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth_high1.png}
+\end{figure}
+\noindent Moreover, when we try to access vulnerabilities/authbypass/change\_user\_details.php, it show a error message indicating only POST request is allowed.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth_high2.png}
+\end{figure}
+\noindent Therefore, we would change from GET method to POST in Burp Suite. However, now we get another error suggesting invalid format.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth_high3.png}
+\end{figure}
+\noindent As a result, we add a JSON data {"id":1,"username":"Bob","last\_name":"Bob"} to our POST request and send.
+Now, we receive a 200 OK status with message suggesting success
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/auth_high4.png} 
+\end{figure}

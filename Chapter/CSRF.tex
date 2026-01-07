@@ -1,0 +1,184 @@
+\subsection{Overview}
+Cross-Site Request Forgery (CSRF) is an attack that forces an end user to execute unwanted actions on a web application in which they’re currently authenticated. With a little help of social engineering (such as sending a link via email or chat), an attacker may trick the users of a web application into executing actions of the attacker’s choosing. If the victim is a normal user, a successful CSRF attack can force the user to perform state changing requests like transferring funds, changing their email address, and so forth. If the victim is an administrative account, CSRF can compromise the entire web application.
+
+\noindent \textbf{Objective:} Craft a valid malicious request
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+if( isset( $_GET[ 'Change' ] ) ) {
+    // Get input
+    $pass_new  = $_GET[ 'password_new' ];
+    $pass_conf = $_GET[ 'password_conf' ];
+
+    // Do the passwords match?
+    if( $pass_new == $pass_conf ) {
+        // They do!
+        $pass_new = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass_new ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+        $pass_new = md5( $pass_new );
+
+        // Update the database
+        $current_user = dvwaCurrentUser();
+        $insert = "UPDATE `users` SET password = '$pass_new' WHERE user = '" . $current_user . "';";
+        $result = mysqli_query($GLOBALS["___mysqli_ston"],  $insert ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+        // Feedback for the user
+        echo "<pre>Password Changed.</pre>";
+    }
+    else {
+        // Issue with passwords matching
+        echo "<pre>Passwords did not match.</pre>";
+    }
+
+    ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+}
+?>
+\end{lstlisting}
+\noindent This code handles a password change feature for a logged-in user. It starts by checking whether the user clicked the Change button using isset(\$\_GET['Change']). Then, the script retrieves the new password and its confirmation. These values are stored in variables \$pass\_new and \$pass\_conf. Next, the code checks whether both entered passwords are identical by comparing them.
+
+\noindent If they are, the new password is sanitized using mysqli\_real\_escape\_string() to protect it from possible SQL injection attacks. After that, the password is hashed using MD5 hash function. The code then runs DVWACurrentUser() to identify the current user and executes an SQL UPDATE query with mysql\_query() to replace their old password with the new hashed password in the database.If any database-related error occurs, the script stops the execution and displays an error message.
+
+\noindent If the database update succeeds, a message is shown to confirm that the password was changed. If the two passwords do not match, the else block is executed instead and an error message is shown informing the user of the mismatch. After trying to change the password, we can see that the request is handled using the GET method, as we saw earlier in the source code, with the parameters included directly in the URL.
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}    
+<?php
+if( isset( $_GET[ 'Change' ] ) ) {
+    // Checks to see where the request came from
+    if( stripos( $_SERVER[ 'HTTP_REFERER' ] ,$_SERVER[ 'SERVER_NAME' ]) !== false ) {
+        // Get input
+        $pass_new  = $_GET[ 'password_new' ];
+        $pass_conf = $_GET[ 'password_conf' ];
+
+        // Do the passwords match?
+        if( $pass_new == $pass_conf ) {
+            // They do!
+            $pass_new = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass_new ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+            $pass_new = md5( $pass_new );
+
+            // Update the database
+            $current_user = dvwaCurrentUser();
+            $insert = "UPDATE `users` SET password = '$pass_new' WHERE user = '" . $current_user . "';";
+            $result = mysqli_query($GLOBALS["___mysqli_ston"],  $insert ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+            // Feedback for the user
+            echo "<pre>Password Changed.</pre>";
+        }
+        else {
+            // Issue with passwords matching
+            echo "<pre>Passwords did not match.</pre>";
+        }
+    }
+    else {
+        // Didn't come from a trusted source
+        echo "<pre>That request didn't look correct.</pre>";
+    }
+
+    ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+}
+?>
+\end{lstlisting}
+\noindent The password change flow remains unchanged in this level. However, there is an addition of a security check verifying where the password change request came from before processing it. After confirming that the Change button was clicked, the code use stripos() to check whether the website’s domain name appears inside the Referer URL. If it does, the request is assumed to have come from the same website and is allowed to proceed where it is processed in the same way as in the low level; if not, it is rejected with an error message. 
+
+\noindent Here, in Burp Suite, we can observe the difference which is the missing of Referer header between a valid request request and an invalid one.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csrf_invalid.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csrf_valid.png} 
+\end{figure}
+\noindent So our approach will be to intercept invalid request and inject a correct Referer header into it. As a result, we can make it looks like our request comes from a legitimate source, helping us bypass the security check.
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+$change = false;
+$request_type = "html";
+$return_message = "Request Failed";
+
+if ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists ("CONTENT_TYPE", $_SERVER) && $_SERVER['CONTENT_TYPE'] == "application/json") {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $request_type = "json";
+    if (array_key_exists("HTTP_USER_TOKEN", $_SERVER) &&
+        array_key_exists("password_new", $data) &&
+        array_key_exists("password_conf", $data) &&
+        array_key_exists("Change", $data)) {
+        $token = $_SERVER['HTTP_USER_TOKEN'];
+        $pass_new = $data["password_new"];
+        $pass_conf = $data["password_conf"];
+        $change = true;
+    }
+} else {
+    if (array_key_exists("user_token", $_REQUEST) &&
+        array_key_exists("password_new", $_REQUEST) &&
+        array_key_exists("password_conf", $_REQUEST) &&
+        array_key_exists("Change", $_REQUEST)) {
+        $token = $_REQUEST["user_token"];
+        $pass_new = $_REQUEST["password_new"];
+        $pass_conf = $_REQUEST["password_conf"];
+        $change = true;
+    }
+}
+
+if ($change) {
+    // Check Anti-CSRF token
+    checkToken( $token, $_SESSION[ 'session_token' ], 'index.php' );
+
+    // Do the passwords match?
+    if( $pass_new == $pass_conf ) {
+        // They do!
+        $pass_new = mysqli_real_escape_string ($GLOBALS["___mysqli_ston"], $pass_new);
+        $pass_new = md5( $pass_new );
+
+        // Update the database
+        $current_user = dvwaCurrentUser();
+        $insert = "UPDATE `users` SET password = '" . $pass_new . "' WHERE user = '" . $current_user . "';";
+        $result = mysqli_query($GLOBALS["___mysqli_ston"],  $insert );
+
+        // Feedback for the user
+        $return_message = "Password Changed.";
+    }
+    else {
+        // Issue with passwords matching
+        $return_message = "Passwords did not match.";
+    }
+
+    mysqli_close($GLOBALS["___mysqli_ston"]);
+
+    if ($request_type == "json") {
+        generateSessionToken();
+        header ("Content-Type: application/json");
+        print json_encode (array("Message" =>$return_message));
+        exit;
+    } else {
+        echo "<pre>" . $return_message . "</pre>";
+    }
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?>
+\end{lstlisting}
+\noindent The high level code implements a more robust and flexible password change process by supporting both normal HTML form submissions and JSON-based requests.
+
+\noindent First, the code initializes default values and checks how the request was sent. If the request uses the POST method and has a content type of application/json, the code reads the raw request body, decodes the JSON data, and extracts the required fields along with a CSRF token sent in a request header. Otherwise, it falls back to handling a traditional form submission, where the same values are read from standard request parameters. In both cases, the request is only marked valid if all required fields are present.
+
+\noindent Once a valid request is detected, the code checks the Anti-CSRF token to ensure the request is legitimate. It then verifies that the new password and confirmation password match. If they do, the password is sanitized with mysqli\_real\_escape\_string() to prevent SQL injection, hashed using MD5, and updated in the database for the currently logged-in user. 
+
+\noindent After that, the application returns a result message depending on the request type: a JSON response for JSON-based request and plain text on the other hand. Finally, a new CSRF token is generated to protect subsequent interactions. 
+
+\noindent To solve this level, we need to craft a request with valid token value. Fortunately, after further analysis, we see that token is transmitted along with the request. 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csrf_high3.png} 
+\end{figure}
+
+\noindent As a result, we can copy its value and attach it in our malicious request.

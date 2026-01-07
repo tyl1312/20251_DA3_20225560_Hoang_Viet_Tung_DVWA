@@ -1,0 +1,85 @@
+\subsection{Overview}
+Uploaded files represent a significant risk to applications. The first step in many attacks is to get some code to the system to be attacked. Then the attack only needs to find a way to get the code executed. Using a file upload helps the attacker accomplish the first step. The consequences of unrestricted file upload can vary, including complete system takeover, an overloaded file system or database, forwarding attacks to back-end systems, client-side attacks, or simple defacement. It depends on what the application does with the uploaded file and especially where it is stored.
+
+\noindent \textbf{Objective:} Execute any PHP function on target system
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}   
+<?php
+if( isset( $_POST[ 'Upload' ] ) ) {
+    // Where are we going to be writing to?
+    $target_path  = DVWA_WEB_PAGE_TO_ROOT . "hackable/uploads/";
+    $target_path .= basename( $_FILES[ 'uploaded' ][ 'name' ] );
+
+    // Can we move the file to the upload folder?
+    if( !move_uploaded_file( $_FILES[ 'uploaded' ][ 'tmp_name' ], $target_path ) ) {
+        // No
+        echo '<pre>Your image was not uploaded.</pre>';
+    }
+    else {
+        // Yes!
+        echo "<pre>{$target_path} succesfully uploaded!</pre>";
+    }
+}
+?>
+\end{lstlisting}
+\noindent The code represents a basic file upload function. It first checks whether the user clicked the Upload button. If so, it defines the directory where uploaded files will be stored and appends the original filename provide to create the final storage path. Next, the code attempts to move the uploaded file from its temporary location on the server to the upload directory using move\_uploaded\_file(). If the operation succeeds, a success message is displayed along with the path where the file was saved. Although the message for the failed upload implies that only image files should be uploaded, lacks of validation and sanitization enables attacker to upload arbitrary files, including PHP scripts. For example, uploading a .php file containing "<?php echo file\_get\_contents('/etc/passwd'); ?>" would allow the attacker to read sensitive system files when the script is accessed.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/fu_res.png}
+\end{figure}
+
+\noindent As you can see, the message indicates that the file is uploaded. Now, we will try to get access to the file on the browser to see if the file works normally
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/fu_res_low.png}
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_POST[ 'Upload' ] ) ) {
+    // Where are we going to be writing to?
+    $target_path  = DVWA_WEB_PAGE_TO_ROOT . "hackable/uploads/";
+    $target_path .= basename( $_FILES[ 'uploaded' ][ 'name' ] );
+
+    // File information
+    $uploaded_name = $_FILES[ 'uploaded' ][ 'name' ];
+    $uploaded_type = $_FILES[ 'uploaded' ][ 'type' ];
+    $uploaded_size = $_FILES[ 'uploaded' ][ 'size' ];
+
+    // Is it an image?
+    if( ( $uploaded_type == "image/jpeg" || $uploaded_type == "image/png" ) &&
+        ( $uploaded_size < 100000 ) ) {
+
+        // Can we move the file to the upload folder?
+        if( !move_uploaded_file( $_FILES[ 'uploaded' ][ 'tmp_name' ], $target_path ) ) {
+            // No
+            echo '<pre>Your image was not uploaded.</pre>';
+        }
+        else {
+            // Yes!
+            echo "<pre>{$target_path} succesfully uploaded!</pre>";
+        }
+    }
+    else {
+        // Invalid file
+        echo '<pre>Your image was not uploaded. We can only accept JPEG or PNG images.</pre>';
+    }
+}
+
+?>
+\end{lstlisting}
+\noindent In this level, basic validation is added to the file upload process. After the user clicks the Upload button, the code defines the upload directory and the final file path using the original filename like in the low level. However, the application now collects information about the uploaded file, including its name, MIME type, and size. After that, the code checks whether the uploaded file is JPEG or PNG image and whether its size is smaller than 100 KB. Only if both conditions are met, does the code attempt to move the file from its temporary location to the upload directory. If the upload succeeds, a success message is displayed; otherwise, an error message is shown.
+
+\noindent When we try to upload our shell.php file, it clearly fails.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/fu_res_med.png}
+\end{figure}
+\noindent So, we open Burp Suite to view that last request to see why it fails. As expected, the Content-Type of the file is neither "image/png" nor "image/jpeg" but "application/octet-stream" instead. Therefore, in order to bypass the security check, we need to change Content-Type header to "image/png".

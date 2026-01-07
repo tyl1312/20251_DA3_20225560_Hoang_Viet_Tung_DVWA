@@ -1,0 +1,192 @@
+\section{Overview}
+ModSecurity is an open source, cross-platform web application firewall (WAF) module. Known as the “Swiss Army Knife” of WAFs, it enables web application defenders to gain visibility into HTTP(S) traffic and provides a power rules language and API to implement advanced protections.
+
+Used by businesses, government organizations, internet service providers, and commercial WAF vendors alike on millions of domains all over the world. The engine, coupled with OWASP CRS - the dominant WAF rule set, undeniably raises the level of protection against HTTP attacks to a higher level.
+
+And in this project, we will set up our own rules to help detect above vulnerabilties.
+
+\section{Bruteforce}
+Brute-force attacks is well-known for involving automated systems making rapid, repetitive attempts to guess usernames or passwords, typically with the goal of gaining unauthorized access to an account. These attacks often generate a high volume of failed login attempts in a short period, originating from the same IP address.
+\begin{lstlisting}
+SecAction "id:1001,initcol:ip=%{REMOTE_ADDR},pass,nolog"
+
+# Login failed
+SecRule RESPONSE_BODY "Username and/or password incorrect" \
+    "id:1002,\
+    phase:4,\
+    pass,\
+    setvar:ip.failed_logins=+1,\
+    expirevar:ip.failed_logins=60"
+
+# Block if fail > 3
+SecRule IP:FAILED_LOGINS "@gt 5" \
+    "id:1003,\
+    deny,\
+    status:429,\
+    log,\
+    msg:'Brute force detected from %{REMOTE_ADDR}'"
+\end{lstlisting}
+
+\noindent This rule set implements basic brute force protection. First, SecAction initializes an IP based collection to track each client’s activity. The second rule runs in phase 4, and monitors the server’s response body. When a failed login message is detected, it increments a counter for that IP and sets it to expire after 60 seconds. The final rule checks this counter and, if the number of failed attempts exceeds the threshold, blocks further requests from that IP with a 429 Too Many Requests response, indicating a suspected brute force attack.
+
+\section{Command injection}
+\begin{lstlisting}
+    SecRule ARGS|REQUEST_BODY "(;|\||&&|\b(cat|wget|curl|ls|ping|whoami|bash)\b)" \
+    "id:1004, \
+    phase:2, \
+    block, \
+    status:403, \
+    log, \
+    msg:'Command injection detected', \
+    severity:CRITICAL"
+\end{lstlisting}
+\noindent The rule applies to both request arguments and the request body, ensuring that parameters submitted via URL queries or POST data are examined. First, the rule looks for special shell characters such as ;, |, and \&\&, which we have used to practice our attacks. Secondly, it searches for common command keywords like cat, wget, curl,... which attackers often leverage to read files, download payloads, or execute shells.
+
+\noindent If any of these patterns are detected during phase 2 of request processing, after the request body has been read, ModSecurity immediately blocks the request and returns an HTTP 403 Forbidden response. The event is also logged with a critical severity level and a clear message indicating that a command injection attempt was detected.
+
+\section{File inclusion}
+\noindent File inclusion occurs when an attacker is able to manipulate file paths in a web application to include local or remote files that are not intended to be accessed. Common attacks include Local File Inclusion (LFI), where an attacker can access sensitive system files (e.g., /etc/passwd), and Remote File Inclusion (RFI), where remote malicious files are included and executed.
+\begin{lstlisting}
+#Local file inclusion
+SecRule REQUEST_URI "\.\./" \
+    "id:1005,\
+    phase:2,\
+    deny,\
+    status:403,\
+    log,\
+    msg:'LFI detected through directory traversal',\
+    severity:'CRITICAL'"
+
+SecRule REQUEST_URI "(?:etc|%2fetc)(?:/+|%2f+)passwd" \
+    "id:1006,\
+    phase:2,\
+    deny,\
+    status:403,\
+    log,\
+    msg:'LFI detected: sensitive file path in URL',\
+    severity:'CRITICAL'"
+
+SecRule REQUEST_URI "file://" \
+    "id:1007,\
+    phase:2,\
+    deny,\
+    status:403,\
+    log,\
+    msg:'LFI detected: PHP stream wrapper detected',\
+    severity:'CRITICAL'"
+\end{lstlisting}
+\noindent We have come up with three separate rules for file inclusion vulnerability based on three levels and their objectives in DVWA. All of them focus on detecting in request URI in phase 2 after the request body has been read but before the request is processed by the application, allowing ModSecurity to inspect for malicious patterns.
+
+\noindent The first focuses on detecting directory traversal attempts. It matches the sequence ../, which attackers commonly use to navigate out of the web root directory and access arbitrary files on the filesystem. If such a pattern appears in the request URI, the request is denied with an HTTP 403 status, logged, and marked as a critical security event.
+
+\noindent The second alerts when sensitive system files are being accessed, specifically /etc/passwd, which is a frequent LFI target on Unix-like systems. The regular expression also accounts for URL-encoded variants such as \%2fetc, ensuring that encoded traversal attempts are not overlooked. If any attempts detected, ModSecurity will immediately blocks the request and log the event with critical severity level.
+
+\noindent The third rule is designed based on the high level of the vulnerability. It will detect the appearance of the file:// protocol in the request URI. Attackers may use this wrapper to force the application to read local files directly. When such a pattern is detected, the rule will block the request.
+
+\section{File upload}
+\noindent File upload vulnerabilities occur when an attacker can upload a file to a web server without proper validation, potentially allowing the upload of malicious files like PHP scripts or malware. Once uploaded, these files can be executed on the server, leading to code execution and potential server compromise. Attackers often attempt to upload files with dangerous extensions like .php, .phtml, .php3, and others.
+\begin{lstlisting}
+#Allow only image
+SecRule REQUEST_HEADERS:Content-Type "!@rx ^image/(jpeg|jpg|png|gif)$" \
+  "id:1008, \
+  phase:2, \
+  block, \
+  status:415, \
+  log, \
+  msg:'Invalid Content-Type', \
+  severity:'CRITICAL'"
+
+#Block dangerous extensions
+SecRule FILES "@rx \.(php|phtml|php[0-9]|phar|pl|py|jsp|asp|sh|exe|bat|cmd)$" \
+  "id:1009, \
+  phase:2, \
+  block, \
+  status:403, \
+  log, \
+  msg:'Invalid file extension detected', \
+  severity:'CRITICAL'"
+
+# Block double extensions
+SecRule FILES "@rx \.[a-z0-9]{1,10}\.(php|phtml|exe|sh|pl)$" \
+  "id:1010, \
+  phase:2, \
+  block, \
+  status:403, \
+  log, \
+  msg:'Double extension upload attempt detected', \
+  severity:'CRITICAL'"
+\end{lstlisting}
+\noindent For file upload vulnerability, we think of three rules based on 2 notable feature: Content-Type header and file extension. The first rule focuses of the former, sets up an allowlist for only image MIME types such as jpeg, jpg, png, gif. If the uploaded content type does not match, it will block the request with HTTP 415 Unsupported Media .
+
+\noindent The second and third rule focus the other feature: file extension. While the second one aims for dangerous extensions commonly used for executing code on the server, the third one targets double extensions or null bytes which are often used to bypass simple extension check. Both of them will block the request with status 403 Forbidden if any aforementioned pattern is detected.
+
+\section{SQL injection}
+Common SQLi techniques include inserting malicious SQL keywords like SELECT, UNION, DROP, INSERT, and using special characters like ', ", --, \#, and ; to modify the behavior of the original query.
+\begin{lstlisting}
+#Detect SQL special characters
+SecRule ARGS|ARGS_NAMES|REQUEST_COOKIES "@rx (?:--|['@#=()])" \
+  "id:1011, \
+   phase:2, \
+   block, \
+   status:403, \
+   t:urlDecodeUni,t:lowercase, \
+   log, \
+   msg:'SQLi special character detected', \
+   severity:CRITICAL"
+
+#Detect SQL keywords
+SecRule ARGS|ARGS_NAMES|REQUEST_COOKIES "@rx (?i)\b(select|union|insert|update|delete|drop|into|from|where|having|group\s+by|order\s+by)\b" \
+  "id:1012, \
+   phase:2, \
+   block, \
+   status:403, \
+   t:urlDecodeUni,t:lowercase, \
+   log, \
+   msg:'SQLi keyword detected', \
+   severity:CRITICAL"
+\end{lstlisting}
+\noindent Like most of other rules, we set up two rules based on special character and dangerous keywords against SQL injection.
+The first one detects SQL special characters such as SQL comment markers(--, \#), quotes,... in user input, request cookies. Before matching, the input is URL decoded and converted to lowercase to prevent any evasion or obfuscation techniques,
+
+\noindent The second rule focuses on frequently used SQL keyword like select, union, from,... Like the first rule, it applies normalization transformation to counter obfuscation technique. The rule will block with status 403 Forbidden as soon as a keyword is detected
+
+\section{XSS}
+Cross-Site Scripting (XSS) vulnerabilities occur when user-controlled input is inserted into a webpage without proper sanitization. This allows attackers to inject malicious JavaScript payloads, which can execute in the victim's browser. Attackers frequently use payloads containing HTML tags, JavaScript functions, or DOM manipulation APIs.
+\begin{lstlisting}
+#XSS special character
+SecRule ARGS|ARGS_NAMES|REQUEST_COOKIES "@rx [<>]" \
+  "id:1013, \
+  phase:2, \
+  block, \
+  status:403, \
+  t:urlDecodeUni,t:lowercase, \
+  log, \
+  msg:'XSS special character detected', \
+  severity:CRITICAL"
+
+#XSS keyword
+SecRule ARGS|ARGS_NAMES|REQUEST_COOKIES "@rx (?i)\b(script|alert|prompt|onerror|onclick|onload|eval|javascript:|data:)\b" \
+  "id:1014, \
+  phase:2, \
+  block, \
+  status:403, \
+  t:urlDecodeUni,t:lowercase, \
+  log, \
+  msg:'XSS keyword detected', \
+  severity:CRITICAL"
+
+#DOM-based
+SecRule ARGS|ARGS_NAMES|REQUEST_COOKIES "@rx (?i)\b(document\.cookie|document\.domain|document\.queryselector|document\.body\.appendchild|document\.write|\.parentnode|\.innerhtml|window\.location)\b" \
+  "id:1015, \
+   phase:2, \
+   block, \
+   status:403, \
+   t:urlDecodeUni,t:lowercase, \
+   log, \
+   msg:'DOM XSS keyword detected', \
+   severity:CRITICAL"
+\end{lstlisting}
+\noindent The security rules shown in the images implement a layered approach to detecting XSS attacks. First, a special-character rule blocks any request containing HTML tag brackets such as “<" and “>”, which are commonly used for HTML tags creation. 
+\noindent The second rule focuses on detecting high-risk and frequently used keywords such as script, alert, prompt, onload, onclick, and javascript:.  
+\noindent The third rule addresses DOM-based XSS attacks, which manipulate the browser’s Document Object Model. It searches for dangerous JavaScript objects and methods such as document.cookie, document.write, innerHTML, and window.location, which are frequently used.
+\end{document}

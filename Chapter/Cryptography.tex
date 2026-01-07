@@ -1,0 +1,507 @@
+\subsection{Overview}
+\noindent Cryptography is the science of protecting information using mathematical techniques to ensure confidentiality, integrity, and authentication. It transforms readable data into unreadable form, preventing unauthorized access and tampering.
+
+\noindent \textbf{Objective:} Exploit weak cryptographic implementations
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+
+function xor_this($cleartext, $key) {
+    // Our output text
+    $outText = '';
+
+    // Iterate through each character
+    for($i=0; $i<strlen($cleartext);) {
+        for($j=0; ($j<strlen($key) && $i<strlen($cleartext)); $j++,$i++) {
+            $outText .= $cleartext[$i] ^ $key[$j];
+        }
+    }
+    return $outText;
+}
+
+$key = "wachtwoord";
+
+$errors = "";
+$success = "";
+$messages = "";
+$encoded = null;
+$encode_radio_selected = " checked='checked' ";
+$decode_radio_selected = " ";
+$message = "";
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    try {
+        if (array_key_exists ('message', $_POST)) {
+            $message = $_POST['message'];
+            if (array_key_exists ('direction', $_POST) && $_POST['direction'] == "decode") {
+                $encoded = xor_this (base64_decode ($message), $key);
+                $encode_radio_selected = " ";
+                $decode_radio_selected = " checked='checked' ";
+            } else {
+                $encoded = base64_encode(xor_this ($message, $key));
+            }
+        }
+        if (array_key_exists ('password', $_POST)) {
+            $password = $_POST['password'];
+            $decoded = xor_this (base64_decode ($password), $key);
+            if ($password == "Olifant") {
+                $success = "Welcome back user";
+            } else {
+                $errors = "Login Failed";
+            }
+        }
+    } catch(Exception $e) {
+        $errors = $e->getMessage();
+    }
+}
+
+$html = "
+        <p>
+        This super secure system will allow you to exchange messages with your friends without anyone else being able to read them. Use the box below to encode and decode messages.
+        </p>
+        <form name=\"xor\" method='post' action=\"" . $_SERVER['PHP_SELF'] . "\">
+            <p>
+                <label for='message'>Message:</lable><br />
+                <textarea style='width: 600px; height: 56px' id='message' name='message'>" . htmlentities ($message) . "</textarea>
+            </p>
+            <p>
+                <input type='radio' value='encode' name='direction' id='direction_encode' " . $encode_radio_selected . "><label for='direction_encode'>Encode</label> or 
+                <input type='radio' value='decode' name='direction' id='direction_decode' " . $decode_radio_selected . "><label for='direction_decode'>Decode</label>
+            </p>
+            <p>
+                <input type=\"submit\" value=\"Submit\">
+            </p>
+        </form>
+";
+
+if (!is_null ($encoded)) {
+    echo "
+            <p>
+                <label for='encoded'>Message:</lable><br />
+                <textarea readonly='readonly' style='width: 600px; height: 56px' id='encoded' name='encoded'>" . htmlentities ($encoded) . "</textarea>
+            </p>";
+}
+
+echo "
+        <hr>
+        <p>
+        You have intercepted the following message, decode it and log in below.
+        </p>
+        <p>
+        <textarea readonly='readonly' style='width: 600px; height: 28px' id='encoded' name='encoded'>Lg4WGlQZChhSFBYSEB8bBQtPGxdNQSwEHREOAQY=</textarea>
+        </p>
+";
+
+if ($errors != "") {
+    echo '<div class="warning">' . $errors . '</div>';
+}
+
+if ($messages != "") {
+    echo '<div class="nearly">' . $messages . '</div>';
+}
+
+if ($success != "") {
+    echo '<div class="success">' . $success . '</div>';
+}
+
+echo "
+        <form name=\"ecb\" method='post' action=\"" . $_SERVER['PHP_SELF'] . "\">
+            <p>
+                <label for='password'>Password:</lable><br />
+<input type='password' id='password' name='password'>
+            </p>
+            <p>
+                <input type=\"submit\" value=\"Login\">
+            </p>
+        </form>
+";
+?>
+\end{lstlisting}\
+
+\noindent This code implements a  message encoding/decoding feature and a login mechanism using a custom XOR-based “encryption” scheme. At the core of the logic is the xor\_this() function, which takes a cleartext message and a static key ("wachtwoord") and applies a repeating XOR operation between each character of the message and the key. The same function is used for both encryption and decryption, since XOR is reversible when the same key is applied again.
+
+\noindent If the user selects the encode option, the plaintext is XORed with the key and then Base64 encoded before being displayed. If the decode option is selected, the input is first Base64 decoded and then XORed with the same key to recover the original message.
+
+\noindent The second part of the code presents an encoded message and asks the user to decode it in order to log in. When a password is submitted, it is Base64 decoded and XORed with the same static key. After that, the code the raw input password against the hardcoded string "Olifant".
+
+\noindent To exploit cryptographic implementation, we need to know its key. Let's pretend that we haven't known the value of it.
+Since the code uses XOR based encryption, it is easy to retrieve the key because we know both the plaintext and the ciphertex. However, in this scenario, after XOR operation, there is also Base64 encoding. Therefore, before performing the XOR operation, we need to Base64 decode the ciphertext.
+
+\noindent To illustrate, we will make use of the DVWA example here. First, we need to obtain the original plaintext by pasting the following message and use decode option
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/cryp1.png} 
+\end{figure}
+
+\noindent Then, we will use CyberChef to find the key. We will need to choose From Base64 to ensure that the ciphertext is decoded before XOR operation. Next, we will choose XOR option with key is the recently obtained plaintext and output type is UTF8.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/cryp2.png} 
+\end{figure}
+\noindent Here, we can see the result is "wachtwoord" repeating itself.
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+function decrypt ($ciphertext, $key) {
+    $e = openssl_decrypt($ciphertext, 'aes-128-ecb', $key, OPENSSL_PKCS1_PADDING);
+    if ($e === false) {
+        throw new Exception ("Decryption failed");
+    }
+    return $e;
+}
+
+$key = "ik ben een aardbei";
+
+$errors = "";
+$success = "";
+$messages = "";
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    try {
+        if (!array_key_exists ('token', $_POST)) {
+            throw new Exception ("No token passed");
+        } else {
+            $token = $_POST['token'];
+            if (strlen($token) % 32 != 0) {
+                throw new Exception ("Token is in wrong format");
+            } else {
+                $decrypted = decrypt(hex2bin ($token), $key);
+
+                $user = json_decode ($decrypted);
+                if ($user === null) {
+                    throw new Exception ("Could not decode JSON object.");
+                }
+
+                if ($user->user == "sweep" && $user->ex > time() && $user->level == "admin") {
+                    $success = "Welcome administrator Sweep";
+                } else {
+                    $messages = "Login successful but not as the right user.";
+                }
+            }
+        }
+    } catch(Exception $e) {
+        $errors = $e->getMessage();
+    }
+}
+
+$html = "
+        <p>
+        You have managed to get hold of three session tokens for an application you think is using poor cryptography to protect its secrets:
+        </p>
+        <p>
+        <strong>Sooty (admin), session expired</strong>
+        </p>
+        <p>
+<textarea style='width: 600px; height: 56px'>e287af752ed3f9601befd45726785bd9b85bb230876912bf3c66e50758b222d0837d1e6b16bfae07b776feb7afe576305aec34b41499579d3fb6acc8dc92fd5fcea8743c3b2904de83944d6b19733cdb48dd16048ed89967c250ab7f00629dba</textarea>
+        </p>
+        <p>
+        <strong>Sweep (user), session expired</strong>
+        </p>
+        <p>
+<textarea style='width: 600px; height: 56px'>3061837c4f9debaf19d4539bfa0074c1b85bb230876912bf3c66e50758b222d083f2d277d9e5fb9a951e74bee57c77a3caeb574f10f349ed839fbfd223903368873580b2e3e494ace1e9e8035f0e7e07</textarea>
+        </p>
+        <p>
+        <strong>Soo (user), session valid</strong>
+        </p>
+        <p>
+<textarea style='width: 600px; height: 56px'>5fec0b1c993f46c8bad8a5c8d9bb9698174d4b2659239bbc50646e14a70becef83f2d277d9e5fb9a951e74bee57c77a3c9acb1f268c06c5e760a9d728e081fab65e83b9f97e65cb7c7c4b8427bd44abc16daa00fd8cd0105c97449185be77ef5</textarea>
+        </p>
+        <p>
+        Based on the documentation, you know the format of the token is:
+        </p>
+        <pre><code>{
+    \"user\": \"example\",
+    \"ex\": 1723620372,
+    \"level\": \"user\",
+    \"bio\": \"blah\"
+}</code></pre>
+<p>
+You also spot this comment in the docs:
+</p>
+<blockquote><i>
+To ensure your security, we use aes-128-ecb throughout our application.
+</i></blockquote>
+
+        <hr>
+        <p>
+        Manipulate the session tokens you have captured to log in as Sweep with admin privileges.
+";
+
+if ($errors != "") {
+    echo '<div class="warning">' . $errors . '</div>';
+}
+
+if ($messages != "") {
+    echo '<div class="nearly">' . $messages . '</div>';
+}
+
+if ($success != "") {
+    echo '<div class="success">' . $success . '</div>';
+}
+
+echo "
+        <form name=\"ecb\" method='post' action=\"" . $_SERVER['PHP_SELF'] . "\">
+            <p>
+                <label for='token'>Token:</lable><br />
+<textarea style='width: 600px; height: 56px' id='token' name='token'></textarea>
+            </p>
+            <p>
+                <input type=\"submit\" value=\"Submit\">
+            </p>
+        </form>
+";
+?>
+\end{lstlisting}
+\noindent This code implements a login mechanism based on an encrypted token. The decrypt() function uses OpenSSL’s AES-128 in ECB mode to decrypt the token using a fixed key "ik ben een aardbei". The decryption applies OPENSSL\_PKCS1\_PADDING, and an exception is thrown if decryption fails.
+
+\noindent When a POST request is received, the application first checks whether a token parameter is present. If the token is missing or its length is not a multiple of 32, an exception is raised. Otherwise, the token is converted from hex to binary and decrypted using the fixed key.
+
+\noindent After decryption, the resulting string is parsed as JSON. The code expects the decrypted token to contain a JSON object with fields such as user, ex, level and bio. If the JSON cannot be decoded, an exception is thrown.
+
+\noindent The user is considered an authenticated administrator only if user equals "sweep", the expiration time ex is in the future, and level equals "admin". If these conditions are met, a success message is displayed; otherwise, a generic login success message is shown.
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+require ("token_library_high.php");
+
+$message = "";
+
+$token_data = create_token();
+
+$html = "
+    <script>
+        function send_token() {
+
+            const url = 'source/check_token_high.php';
+            const data = document.getElementById ('token').value;
+
+            console.log (data);
+             
+            fetch(url, { 
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    }, 
+                    body: data
+                }) 
+                .then(response => { 
+                    if (!response.ok) { 
+                        throw new Error('Network response was not ok'); 
+                } 
+                return response.json(); 
+                }) 
+                .then(data => { 
+                    console.log(data);
+                    message_line = document.getElementById ('message');
+                    if (data.status == 200) {
+                        message_line.innerText = 'Welcome back ' + data.user + ' (' + data.level + ')';
+                        message_line.setAttribute('class', 'success');
+                    } else {
+                        message_line.innerText = 'Error: ' + data.message;
+                        message_line.setAttribute('class', 'warning');
+                    }
+                }) 
+                .catch(error => { 
+                    console.error('There was a problem with your fetch operation:', error); 
+            }); 
+
+        }
+    </script>
+        <p>
+            You have managed to steal the following token from a user of the Prognostication application.
+        </p>
+        <p>
+            <textarea style='width: 600px; height: 23px'>" . htmlentities ($token_data) . "</textarea>
+        </p>
+        <p>
+            You can use the form below to provide the token to access the system. You have two challenges, first, decrypt the token to find out the secret it contains, and then create a new token to access the system as a other users. See if you can make yourself an administrator.
+        </p>
+        <hr>
+        <form name=\"check_token\" action=\"\">
+            <div id='message'></div>
+            <p>
+                <label for='token'>Token:</lable><br />
+                <textarea id='token' name='token' style='width: 600px; height: 23px'>" . htmlentities ($token_data) . "</textarea>
+            </p>
+            <p>
+                <input type=\"button\" value=\"Submit\" onclick='send_token();'>
+            </p>
+        </form>
+";
+
+?>
+\end{lstlisting}
+
+\noindent The high level code first includes an external library token\_library\_high.php.
+\begin{lstlisting}
+    token_library_high.php
+<?php
+
+define ("KEY", "rainbowclimbinghigh");
+define ("ALGO", "aes-128-cbc");
+define ("IV", "1234567812345678");
+
+function encrypt ($plaintext, $iv) {
+	# Default padding is PKCS#7 which is interchangable with PKCS#5
+	# https://en.wikipedia.org/wiki/Padding_%28cryptography%29#PKCS#5_and_PKCS#7
+
+	if (strlen ($iv) != 16) {
+		throw new Exception ("IV must be 16 bytes, " . strlen ($iv) . " passed");
+	}
+	$tag = "";
+	$e = openssl_encrypt($plaintext, ALGO, KEY, OPENSSL_RAW_DATA, $iv, $tag);
+	if ($e === false) {
+		throw new Exception ("Encryption failed");
+	}
+	return $e;
+}
+
+function decrypt ($ciphertext, $iv) {
+	if (strlen ($iv) != 16) {
+		throw new Exception ("IV must be 16 bytes, " . strlen ($iv) . " passed");
+	}
+	$e = openssl_decrypt($ciphertext, ALGO, KEY, OPENSSL_RAW_DATA, $iv);
+	if ($e === false) {
+		throw new Exception ("Decryption failed");
+	}
+	return $e;
+}
+
+// Added the debug flag so that when calling from the script
+// the function can print the data used to create the token
+
+function create_token ($debug = false) {
+	$token = "userid:2";
+
+	if ($debug) {
+		print "Clear text token: " . $token . "\n";
+		print "Encryption key: " . KEY . "\n";
+		print "IV: " . (IV) . "\n";
+	}
+
+	$e = encrypt ($token, IV);
+	$data = array (
+					"token" => base64_encode ($e),
+					"iv" => base64_encode (IV)
+				);
+	return json_encode($data);
+}
+
+function check_token ($data) {
+	$users = array ();
+	$users[1] = array ("name" => "Geoffery", "level" => "admin");
+	$users[2] = array ("name" => "Bungle", "level" => "user");
+	$users[3] = array ("name" => "Zippy", "level" => "user");
+	$users[4] = array ("name" => "George", "level" => "user");
+
+	$data_array = false;
+	try {
+		$data_array = json_decode ($data, true);
+	} catch (TypeError $exp) {
+		$ret = array (
+						"status" => 521,
+						"message" => "Data not in JSON format",
+						"extra" => $exp->getMessage()
+					);
+	}
+
+	if (is_null ($data_array)) {
+		$ret = array (
+						"status" => 522,
+						"message" => "Data in wrong format"
+					);
+	} else {
+		if (!array_key_exists ("token", $data_array)) {
+			$ret = array (
+							"status" => 523,
+							"message" => "Missing token"
+						);
+			return json_encode ($ret);
+		}
+		if (!array_key_exists ("iv", $data_array)) {
+			$ret = array (
+							"status" => 524,
+							"message" => "Missing IV"
+						);
+			return json_encode ($ret);
+		}
+			
+		$ciphertext = base64_decode ($data_array['token']);
+		$iv = base64_decode ($data_array['iv']);
+
+		# Asssume failure
+		$ret = array (
+						"status" => 500,
+						"message" => "Unknown error"
+					);
+		try {
+			$d = decrypt ($ciphertext, $iv); 
+			if (preg_match ("/^userid:(\d+)$/", $d, $matches)) {
+				$id = $matches[1];
+				if (array_key_exists ($id, $users)) {
+					$user = $users[$id];
+					$ret = array (
+									"status" => 200,
+									"user" => $user["name"],
+									"level" => $user['level']
+								);
+				} else {
+					$ret = array (
+									"status" => 525,
+									"message" => "User not found"
+								);
+				}
+			} else {
+				$ret = array (
+								"status" => 527,
+								"message" => "No user specified"
+							);
+			}
+		} catch (Exception $exp) {
+			$ret = array (
+							"status" => 526,
+							"message" => "Unable to decrypt token",
+							"extra" => $exp->getMessage()
+						);
+		}
+	}
+	return json_encode ($ret);
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+<?php
+
+require_once ("token_library_high.php");
+
+$ret = "";
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+	if ($_SERVER['CONTENT_TYPE'] != "application/json") {
+		$ret = json_encode (array (
+						"status" => 527,
+						"message" => "Content type must be application/json"
+					));
+	} else {
+		$token = $jsonData = file_get_contents('php://input');
+		$ret = check_token ($token);
+	}
+} else {
+	$ret = json_encode (array (
+					"status" => 405,
+					"message" => "Method not supported"
+				));
+}
+
+print $ret;
+exit;
+\end{lstlisting}

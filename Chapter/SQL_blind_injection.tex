@@ -1,0 +1,243 @@
+\subsection{Overview}
+Blind SQL injection is a type of SQL Injection attack that asks the database true or false questions and determines the answer based on the applications response. This attack is often used when the web application is configured to show generic error messages, but has not mitigated the code that is vulnerable to SQL injection.
+
+\noindent When an attacker exploits SQL injection, sometimes the web application displays error messages from the database complaining that the SQL Query’s syntax is incorrect. Blind SQL injection is nearly identical to normal SQL Injection, the only difference being the way the data is retrieved from the database. When the database does not output data to the web page, an attacker is forced to steal data by asking the database a series of true or false questions. This makes exploiting the SQL Injection vulnerability more difficult, but not impossible.
+
+\noindent \textbf{Objective:} Find the name of database using Blind SQLi
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_GET[ 'Submit' ] ) ) {
+    // Get input
+    $id = $_GET[ 'id' ];
+    $exists = false;
+
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            // Check database
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+            try {
+                $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ); // Removed 'or die' to suppress mysql errors
+            } catch (Exception $e) {
+                print "There was an error.";
+                exit;
+            }
+
+            $exists = false;
+            if ($result !== false) {
+                try {
+                    $exists = (mysqli_num_rows( $result ) > 0);
+                } catch(Exception $e) {
+                    $exists = false;
+                }
+            }
+            ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
+
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+            try {
+                $results = $sqlite_db_connection->query($query);
+                $row = $results->fetchArray();
+                $exists = $row !== false;
+            } catch(Exception $e) {
+                $exists = false;
+            }
+
+            break;
+    }
+
+    if ($exists) {
+        // Feedback for end user
+        echo '<pre>User ID exists in the database.</pre>';
+    } else {
+        // User wasn't found, so the page wasn't!
+        header( $_SERVER[ 'SERVER_PROTOCOL' ] . ' 404 Not Found' );
+
+        // Feedback for end user
+        echo '<pre>User ID is MISSING from the database.</pre>';
+    }
+
+}
+?>
+\end{lstlisting}
+\noindent This code checks whether a user ID exists in the database and provides different responses depending on the result. It first verifies whether the Submit parameter is present in the URL, indicating that the request has been sent. If so, it retrieves the id value from the \$\_GET parameter and initializes a variable named \$exists to track whether the user is found.
+
+\noindent Next, the code determines which database system is being used. For both MySQL and SQLite, it constructs the same SQL query that selects user records where the user\_id matches the provided ID. The query is executed inside a try-catch block, and detailed database error messages are intentionally suppressed to prevent information leakage.
+
+\noindent Instead of displaying database results, the application only checks whether the query returned at least one row. If a matching record exists, \$exists is set to true. 
+
+\noindent The application is vulnerable to SQL injection since the input is embedded directly inside single quotes without proper sanitization. Because of that, the input is treated as SQL code meaning that we can inject additional SQL logic to the original query. For instance, supplying the payload a' OR 1=1\# modifies the query so that the condition always evaluates to true. As a result, the application responds with “User ID exists in the database” even though the input is not a valid numeric id.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/sqlib1.png}
+\end{figure}
+\noindent To determine the database name in a blind SQL-injection assessment, the usual first step is to find out the length of the value returned by the database() function. To do that, we would try payload 
+"1' and length(database())=x\#" in which value of x will increment from 1 by 1 until it makes the applications behave differently. Then we will know the length of the database name is x-1. Summarizing the process, we find out that the database name has 4 letters.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/sqlib_length.png}
+\end{figure}
+
+\noindent Since there are only 4 letters, it is possible for us to brute force for each of them. To do that, first we need a common structure for our test input which is "1' AND SUBSTRING(database(), x1, 1) = 'x2'\#" where x1 is the position of the letter and x2 is its value. This payload lets us find out whether a specific letter in database name has the same value as tested. To automate the process, we will use Burp Intruder with Cluster bomb attacker. We will test every letter in the alphabet for all 4 positions.
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.2\textheight]{Figure/sqli_blind_res.png}
+\end{figure}
+\noindent Here, we see that only 4 request with status 200 OK. From that, we conclude that the name of the database is "dvwa"
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_POST[ 'Submit' ]  ) ) {
+    // Get input
+    $id = $_POST[ 'id' ];
+    $exists = false;
+
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            $id = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $id ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+
+            // Check database
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+            try {
+                $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ); // Removed 'or die' to suppress mysql errors
+            } catch (Exception $e) {
+                print "There was an error.";
+                exit;
+            }
+
+            $exists = false;
+            if ($result !== false) {
+                try {
+                    $exists = (mysqli_num_rows( $result ) > 0); // The '@' character suppresses errors
+                } catch(Exception $e) {
+                    $exists = false;
+                }
+            }
+            
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
+            
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+            try {
+                $results = $sqlite_db_connection->query($query);
+                $row = $results->fetchArray();
+                $exists = $row !== false;
+            } catch(Exception $e) {
+                $exists = false;
+            }
+            break;
+    }
+
+    if ($exists) {
+        // Feedback for end user
+        echo '<pre>User ID exists in the database.</pre>';
+    } else {
+        // Feedback for end user
+        echo '<pre>User ID is MISSING from the database.</pre>';
+    }
+}
+
+?>
+\end{lstlisting}
+\noindent The medium level code is similar to the previous level but introduces basic input sanitization. When the form is submitted, the application retrieves the id value from \$\_POST and attempts to escape special characters before using it in the SQL query.
+
+\noindent Here, the function mysqli\_real\_escape\_string() is applied to the id parameter. However, this sanitization is ineffective because the id value is not enclosed in quotes and is inserted directly into the statement. As a result, an attacker can still append SQL keywords, and the database system will interpret the injected input as valid SQL.
+
+\noindent Since user input is now treated as a numeric expression rather than a string, payloads no longer need a leading quote to break out of the query. For example, when determining the length of the database name, the payload changes to 1 AND length(database()) = x\#.
+
+\noindent Although the input has been changed to a dropdown menu, this restriction can be bypassed by intercepting the request with Burp Suite and modifying the id parameter manually.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/sqlib_med1.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/sqlib_med2.png} 
+\end{figure}
+\noindent Here, we notice that the browser is returning "User ID exists in the database" suggesting that the payload has succeeded. Therefore, with the brute force part, we can use the same payload as the low level but remember to drop the first '
+
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_COOKIE[ 'id' ] ) ) {
+    // Get input
+    $id = $_COOKIE[ 'id' ];
+    $exists = false;
+
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            // Check database
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+            try {
+                $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ); // Removed 'or die' to suppress mysql errors
+            } catch (Exception $e) {
+                $result = false;
+            }
+
+            $exists = false;
+            if ($result !== false) {
+                // Get results
+                try {
+                    $exists = (mysqli_num_rows( $result ) > 0); // The '@' character suppresses errors
+                } catch(Exception $e) {
+                    $exists = false;
+                }
+            }
+
+            ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
+
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+            try {
+                $results = $sqlite_db_connection->query($query);
+                $row = $results->fetchArray();
+                $exists = $row !== false;
+            } catch(Exception $e) {
+                $exists = false;
+            }
+
+            break;
+    }
+
+    if ($exists) {
+        // Feedback for end user
+        echo '<pre>User ID exists in the database.</pre>';
+    }
+    else {
+        // Might sleep a random amount
+        if( rand( 0, 5 ) == 3 ) {
+            sleep( rand( 2, 4 ) );
+        }
+
+        // User wasn't found, so the page wasn't!
+        header( $_SERVER[ 'SERVER_PROTOCOL' ] . ' 404 Not Found' );
+
+        // Feedback for end user
+        echo '<pre>User ID is MISSING from the database.</pre>';
+    }
+}
+
+?>
+\end{lstlisting}
+\noindent The overall logic flow remains largely unchanged at the high level, although several differences are introduced compared to the low level. First, user input is now obtained from a cookie rather than directly from a request parameter. Additionally, a random delay is added when a user ID is not found, which is intended to slow down automated attacks.
+
+\noindent Despite these changes, the id value is still derived from user-controlled data and is inserted directly into the SQL query within single quotes, without any sanitization or parameterization. As a result, the application remains vulnerable to SQL injection. To verify this, we can try the same payload as in the low level, such as "1' AND length(database()) = x\#".
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/sqlib_high1.png} 
+\end{figure}
+\noindent As you can see, the result is still the same as the low level indicating that we can perform SQL blind injection on the application. For the brute force part, we will do the same as the low level as now we have proved that our payload is still working normally here.

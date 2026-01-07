@@ -1,0 +1,128 @@
+\subsection{Overview}
+Stored attacks are those where the injected script is permanently stored on the target servers, such as in a database, in a message forum, visitor log, comment field, etc. The victim then retrieves the malicious script from the server when it requests the stored information. 
+
+\noindent \textbf{Objective:} Execute a malicious script in victim's browser
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'btnSign' ] ) ) {
+    // Get input
+    $message = trim( $_POST[ 'mtxMessage' ] );
+    $name    = trim( $_POST[ 'txtName' ] );
+
+    // Sanitize message input
+    $message = stripslashes( $message );
+    $message = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $message ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+
+    // Sanitize name input
+    $name = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $name ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+
+    // Update database
+    $query  = "INSERT INTO guestbook ( comment, name ) VALUES ( '$message', '$name' );";
+    $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+    //mysql_close();
+}
+?>
+\end{lstlisting}
+
+\noindent Here, the code implements a guestbook submission feature that stores a user’s name and message in the database when the btnSign button is submitted. Once the form is posted, the application retrieves the mtxMessage and txtName fields from the POST request and trims any leading or trailing whitespace.
+
+\noindent The message input is first processed with stripslashes() and then both inputs are escaped using mysqli\_real\_escape\_string(). 
+
+\noindent After sanitization, the application constructs an INSERT query and stores the submitted name and comment into the guestbook table. The stored entries are later retrieved from the database and displayed back on the web page for all users to view.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss3_eg.png} 
+\end{figure}
+
+\noindent Here, despite all above input sanitization mechanisms, the application is only protected against SQL injection but not from any possible XSS attacks. Because user input is saved in the database and later rendered on the web page without proper output encoding, any malicious script submitted by an attacker is safely stored in the database as plain text and subsequently executed by the browser whenever an user accesses the page. To demonstrate, we will try a simple payload with "a" on name field and "<script>alert(1)</script>" on message field. After logging out and accessing the page again, the injected script executed successfully, confirming the presence of a stored XSS vulnerability.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss3_res1.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss3_res2.png} 
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'btnSign' ] ) ) {
+    // Get input
+    $message = trim( $_POST[ 'mtxMessage' ] );
+    $name    = trim( $_POST[ 'txtName' ] );
+
+    // Sanitize message input
+    $message = strip_tags( addslashes( $message ) );
+    $message = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $message ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+    $message = htmlspecialchars( $message );
+
+    // Sanitize name input
+    $name = str_replace( '<script>', '', $name );
+    $name = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $name ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+
+    // Update database
+    $query  = "INSERT INTO guestbook ( comment, name ) VALUES ( '$message', '$name' );";
+    $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+    //mysql_close();
+}
+?>
+\end{lstlisting}
+\noindent At the medium security level, the application applies additional sanitization to user input before storing it in the database. For the message field, the input is first processed using strip\_tags() and addslashes() to remove HTML tags and escape special characters. It is then passed through mysqli\_real\_escape\_string() to mitigate SQL injection risks, followed by htmlspecialchars() to encode special HTML characters. As a result, the message field is effectively protected against XSS attempts.
+
+\noindent In contrast, the name field is only partially sanitized. The application removes the literal <script> tag using str\_replace() and escapes special characters with mysqli\_real\_escape\_string(). As a result, it is still vulnerable to XSS attacks.
+
+\noindent While it is true that <script> tag is now unusable, however, similar to reflected XSS scenarios, attackers can still exploit alternative HTML tags or event attributes such as <img>, <svg>, or <iframe> to execute malicious scripts.
+
+\noindent To demonstrate this, an XSS payload such as <img src=x onerror=alert(1)> was submitted in the name field with a benign message “hi”. Initially, the name input field only accepts up to 10 characters, which prevents direct submission of the payload. However, by using browser developer tools to modify the input field’s length attribute to allow up to 50 characters, the payload can be successfully injected and executed.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/length.png} 
+\end{figure}
+
+\noindent Next, we will also exit and then sign in to see whether the script executes.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss2_res_med.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss_res_med2.png} 
+\end{figure}
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_POST[ 'btnSign' ] ) ) {
+    // Get input
+    $message = trim( $_POST[ 'mtxMessage' ] );
+    $name    = trim( $_POST[ 'txtName' ] );
+
+    // Sanitize message input
+    $message = strip_tags( addslashes( $message ) );
+    $message = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $message ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+    $message = htmlspecialchars( $message );
+
+    // Sanitize name input
+    $name = preg_replace( '/<(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i', '', $name );
+    $name = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $name ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+
+    // Update database
+    $query  = "INSERT INTO guestbook ( comment, name ) VALUES ( '$message', '$name' );";
+    $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+    //mysql_close();
+}
+?>
+\end{lstlisting}
+\noindent Compared to the previous security level, the input handling of the message field and overall flow logic remains unchanged. The only difference lies in the sanitization of the name field. Instead of a simple string replacement for the <script> tag, the application now uses a regular expression with preg\_replace() to remove any obfuscated variations of it.
+
+\noindent As you can see, other HTML tags and JavaScript execution vectors, such as event handlers or non-script tags, are not filtered making the name field still vulnerable. Hence, we will try the same payload as the previous level <img src=x onerror=alert(1);> and we also need to change max length of name field to 50.

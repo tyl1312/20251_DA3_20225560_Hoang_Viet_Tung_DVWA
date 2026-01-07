@@ -1,0 +1,112 @@
+\subsection{Overview}
+\noindent Open redirection vulnerabilities arise when an application incorporates user-controllable data into the target of a redirection in an unsafe way. An attacker can construct a URL within the application that causes a redirection to an arbitrary external domain. This behavior can be leveraged to facilitate phishing attacks against users of the application. The ability to use an authentic application URL, targeting the correct domain and with a valid SSL certificate (if SSL is used), lends credibility to the phishing attack because many users, even if they verify these features, will not notice the subsequent redirection to a different domain.
+
+\noindent \textbf{Objective:} Abuse the redirect page to move the user off the DVWA site or onto a different page on the site than expected.
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != "") {
+    header ("location: " . $_GET['redirect']);
+    exit;
+}
+
+http_response_code (500);
+?>
+<p>Missing redirect target.</p>
+<?php
+exit;
+?>
+\end{lstlisting}
+\noindent First, the if condition checks whether the redirect parameter exists in the URL and is not empty. If this condition fails, the script returns a 500 error and displays the message “Missing redirect target.”
+
+\noindent Otherwise,the script executes "header ("location: " . \$\_GET['redirect']);" which sends an HTTP location header to the browser, causing it to redirect to the specified path. The exit; statement stop further script execution to ensure no additional output being sent after the redirect.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/http1.png} 
+\end{figure}
+\noindent Here, we notice that we are visiting /open\_redirect/source/low.php where redirect parameter is "info.php?id=1". Since there is no validation in user input, we can try changing the value of redirect of parameter to a different site such as "https://www.google.com"
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/http_low1.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/http_low2.png} 
+\end{figure}
+\noindent We get status 302 Found suggesting that it has been successfully redirected.
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != "") {
+    if (preg_match ("/http:\/\/|https:\/\//i", $_GET['redirect'])) {
+        http_response_code (500);
+        ?>
+        <p>Absolute URLs not allowed.</p>
+        <?php
+        exit;
+    } else {
+        header ("location: " . $_GET['redirect']);
+        exit;
+    }
+}
+
+http_response_code (500);
+?>
+<p>Missing redirect target.</p>
+<?php
+exit;
+?>
+\end{lstlisting}
+\noindent In the medium level, the overall logic stays the same. The main difference is that the application is trying to prevent open redirects by rejecting absolute URL using preg\_match(). This function scans a string for a pattern defined by a regular expression. In this case, the pattern checks for the presence of http:// or https://. The i at the end of the pattern makes the match case-insensitive, meaning it will also match inputs such as HTTP:// or Https://. When such a value is detected, the application returns a 500 error and displays the message “Absolute URLs not allowed.” However, we can use other valid redirect techniques which does not contain http:// or https:// protocol such as relative URL (for example, "google.com)
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/http_med1.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/http_med2.png} 
+\end{figure}
+\noindent Here, we also get status 302 Found suggesting successful redirection.
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != "") {
+    if (strpos($_GET['redirect'], "info.php") !== false) {
+        header ("location: " . $_GET['redirect']);
+        exit;
+    } else {
+        http_response_code (500);
+        ?>
+        <p>You can only redirect to the info page.</p>
+        <?php
+        exit;
+    }
+}
+
+http_response_code (500);
+?>
+<p>Missing redirect target.</p>
+<?php
+exit;
+?>
+\end{lstlisting}
+\noindent The high level code further tightens the redirect logic by introducing a strict whitelist checks. Instead of blocking certain patterns, it now explicitly checks whether the provided redirect value contains specified value using strpos(). This function is used to find the position of one string inside another string. If found, it returns the position; if not, it returns false. In this case, strpos() is checking whether the string "info.php" appears in the redirect value. However, because the application only verifies the presence of info.php anywhere in the input, this check can be bypassed by supplying a crafted redirect value that merely includes info.php as part of a longer string, such as google.com?id=info.php.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/http_high1.png} 
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figure/http_high2.png} 
+\end{figure}
+\noindent Status 302 Found suggests that our redirect value has worked.

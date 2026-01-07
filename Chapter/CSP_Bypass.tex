@@ -1,0 +1,136 @@
+\subsection{Overview}
+CSP is a browser security mechanism that aims to mitigate XSS and some other attacks. It works by restricting the resources (such as scripts and images) that a page can load and restricting whether a page can be framed by other pages.
+
+\noindent To enable CSP, a response needs to include an HTTP response header called Content-Security-Policy with a value containing the policy. The policy itself consists of one or more directives, separated by semicolons.
+
+\noindent \textbf{Objective:} Bypass CSP and execute Javascript code
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}   
+<?php
+
+$headerCSP = "Content-Security-Policy: script-src 'self' https://pastebin.com hastebin.com www.toptal.com example.com code.jquery.com https://ssl.google-analytics.com https://digi.ninja ;"; // allows js from self, pastebin.com, hastebin.com, jquery, digi.ninja, and google analytics.
+
+header($headerCSP);
+
+# These might work if you can't create your own for some reason
+# https://pastebin.com/raw/R570EE00
+# https://www.toptal.com/developers/hastebin/raw/cezaruzeka
+
+?>
+<?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= "
+    <script src='" . $_POST['include'] . "'></script>
+";
+}
+$page[ 'body' ] .= '
+<form name="csp" method="POST">
+    <p>You can include scripts from external sources, examine the Content Security Policy and enter a URL to include here:</p>
+    <input size="50" type="text" name="include" value="" id="include" />
+    <input type="submit" value="Include" />
+</form>
+<p>
+    As Pastebin and Hastebin have stopped working, here are some scripts that may, or may not help.
+</p>
+<ul>
+    <li>https://digi.ninja/dvwa/alert.js</li>
+    <li>https://digi.ninja/dvwa/alert.txt</li>
+    <li>https://digi.ninja/dvwa/cookie.js</li>
+    <li>https://digi.ninja/dvwa/forced_download.js</li>
+    <li>https://digi.ninja/dvwa/wrong_content_type.js</li>
+</ul>
+<p>
+    Pretend these are on a server like Pastebin and try to work out why some work and some do not work. Check the help for an explanation if you get stuck.
+</p>
+';
+\end{lstlisting}
+\noindent The code defines s CSP header with the script-src directive, explicitly whitelisting scripts from the application itself and a limited set of trusted external domains such as Pastebin, Hastebin, jQuery CDN, Digi.Ninja, and Google Analytics.
+
+\noindent The application provides a form that allows users to supply a URL, which is then directly inserted into a <script src> tag and added to the page. It suggests that the browser will only load and execute the script if its source matches one of the domains permitted by the CSP. Any script loaded from a non-whitelisted domain will be blocked by the browser.
+
+\noindent To execute Javascript code, we need to input a trusted source defined in CSP header, in this case is "https://digi.ninja/dvwa/alert.js" which will show a popup box with "CSP Bypassed" message.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csp_low2.png} 
+\end{figure}
+
+\noindent As you can see, the script is executed normally.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csp_low3.png} 
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+
+$headerCSP = "Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=';";
+
+header($headerCSP);
+
+// Disable XSS protections so that inline alert boxes will work
+header ("X-XSS-Protection: 0");
+
+# <script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert(1)</script>
+
+?>
+<?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= "
+    " . $_POST['include'] . "
+";
+}
+$page[ 'body' ] .= '
+<form name="csp" method="POST">
+    <p>Whatever you enter here gets dropped directly into the page, see if you can get an alert box to pop up.</p>
+    <input size="50" type="text" name="include" value="" id="include" />
+    <input type="submit" value="Include" />
+</form>
+';
+\end{lstlisting}
+\noindent The medium level code sets up a CSP header that allows scripts from the same origin and inline scripts only if they include a specific nonce value. To explain, a nonce value is a unique, random or pseudo-random value which can be used by CSP to determine whether or not a given fetch will be allowed to proceed for a given element. Any inline script without this exact nonce is blocked by the browser.
+
+\noindent Additionally, the X-XSS-Protection header is disabled to prevent the browser’s built-in XSS filter from interfering with the demonstration. However, a critical problem exists: the nonce never changes . Therefore, the attacker can simply add the tag nonce with the same value to their scripts bypassing the CSP restriction. To demonstrate, we will try using the nonce with payload \newline "<script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert(1)</script>"
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csp_med2.png} 
+\end{figure}
+\noindent Here, you can see that the script is executed normally.
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+$headerCSP = "Content-Security-Policy: script-src 'self';";
+
+header($headerCSP);
+
+?>
+<?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= "
+    " . $_POST['include'] . "
+";
+}
+$page[ 'body' ] .= '
+<form name="csp" method="POST">
+    <p>The page makes a call to ' . DVWA_WEB_PAGE_TO_ROOT . '/vulnerabilities/csp/source/jsonp.php to load some code. Modify that page to run your own code.</p>
+    <p>1+2+3+4+5=<span id="answer"></span></p>
+    <input type="button" id="solve" value="Solve the sum" />
+</form>
+
+<script src="source/high.js"></script>
+';
+\end{lstlisting}
+\noindent In high level, the application enforces a strict Content Security Policy by allowing JavaScript execution only from the same origin using the directive script-src 'self'. No inline scripts, external domains, nonces, or unsafe directives are permitted. This significantly reduces the attack surface for XSS.
+
+\noindent The page itself loads a trusted JavaScript file "source/high.js" from the same origin, which performs a JSONP request to "source/jsonp.php" to dynamically retrieve and execute code. Since this endpoint is hosted on the same origin, it is implicitly trusted by the CSP. 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/csp_high2.png}
+\end{figure}
+\noindent The JavaScript code in source/high.js defines the logic executed when the user clicks the Solve the sum button. First, the clickButton() function dynamically creates a <script> element and sets its source to source/jsonp.php?callback=solveSum. This causes the browser to load and execute the response from jsonp.php. The returned script then invokes the solveSum() function to compute and display the result on the page.

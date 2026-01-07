@@ -1,0 +1,227 @@
+\subsection{Overview}
+A SQL injection attack consists of insertion of a SQL query via the input data from the client to the application. A successful SQL injection exploit can read sensitive data from the database, modify database data, execute administration operations on the database, recover the content of a given file present on the DBMS file system and in some cases issue commands to the operating system. SQL injection attacks are a type of injection attack, in which SQL commands are injected into data-plane input in order to affect the execution of predefined SQL commands.
+
+\noindent \textbf{Objective:} Steal passwords of five users in the database
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting} 
+<?php
+
+if( isset( $_REQUEST[ 'Submit' ] ) ) {
+    // Get input
+    $id = $_REQUEST[ 'id' ];
+
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            // Check database
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+            $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+
+            // Get results
+            while( $row = mysqli_fetch_assoc( $result ) ) {
+                // Get values
+                $first = $row["first_name"];
+                $last  = $row["last_name"];
+
+                // Feedback for end user
+                echo "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+            }
+
+            mysqli_close($GLOBALS["___mysqli_ston"]);
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
+
+            #$sqlite_db_connection = new SQLite3($_DVWA['SQLITE_DB']);
+            #$sqlite_db_connection->enableExceptions(true);
+
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+            #print $query;
+            try {
+                $results = $sqlite_db_connection->query($query);
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage();
+                exit();
+            }
+
+            if ($results) {
+                while ($row = $results->fetchArray()) {
+                    // Get values
+                    $first = $row["first_name"];
+                    $last  = $row["last_name"];
+
+                    // Feedback for end user
+                    echo "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+                }
+            } else {
+                echo "Error in fetch ".$sqlite_db->lastErrorMsg();
+            }
+            break;
+    } 
+}
+?>
+\end{lstlisting}
+\noindent This code implements a user lookup feature based on an ID value submitted through a request. It first checks whether the Submit parameter is present, indicating that the form has been submitted. If so, it retrieves the id parameter from \$\_REQUEST.
+
+\noindent The code then checks the \$\_DVWA['SQLI\_DB'] configuration to determine which database system is in use. Depending on this setting, the same SQL query is executed using either the MySQL or SQLite API. In both cases, the query retrieves the first\_name and last\_name fields from the users table where the user\_id matches the provided ID, and the results are displayed to the user in the same format.
+
+\noindent For example, when the input 1 is provided, the application executes the query
+SELECT first\_name, last\_name FROM users WHERE user\_id = '1';. However, the input is inserted directly into the SQL query without any validation or escaping, making the application vulnerable to SQL injection.
+
+\noindent Because the query results are reflected in the application’s response, this vulnerability can be exploited using a UNION-based SQL injection attack to retrieve data from other tables within the database.
+
+\noindent For a UNION query to work, two conditions must be satisfied: both queries must return the same number of columns, and the corresponding columns must have compatible data types. From the source code, we can see that the original query returns two columns (first\_name and last\_name), which means the injected query must also return two columns. Additionally, these columns are likely string-based.
+
+\noindent Since the original query retrieves data from the users table, which typically contains sensitive information such as usernames and passwords, the next step is to identify the column names in this table. Because the input is placed inside single quotes, a closing quote is required to break out of the original query, and a comment must be used to truncate the remaining SQL statement. In MySQL, this can be done using the \# character.
+
+\noindent Combining these elements, the following payload can be used:
+1' UNION SELECT column\_name, NULL FROM information\_schema.columns WHERE table\_name = 'users'\#, which allows an attacker to enumerate the column names of the users table.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/sqli_low_res1.png} 
+\end{figure}
+
+\noindent Looking at the returned results, we notice that there are password and user column. In order to view them, we will continue to use UNION attack: "1' UNION SELECT user, password from users\#"
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/sqli_low_res2.png} 
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+
+if( isset( $_POST[ 'Submit' ] ) ) {
+    // Get input
+    $id = $_POST[ 'id' ];
+
+    $id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);
+
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query) or die( '<pre>' . mysqli_error($GLOBALS["___mysqli_ston"]) . '</pre>' );
+
+            // Get results
+            while( $row = mysqli_fetch_assoc( $result ) ) {
+                // Display values
+                $first = $row["first_name"];
+                $last  = $row["last_name"];
+
+                // Feedback for end user
+                echo "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+            }
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
+
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+            #print $query;
+            try {
+                $results = $sqlite_db_connection->query($query);
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage();
+                exit();
+            }
+
+            if ($results) {
+                while ($row = $results->fetchArray()) {
+                    // Get values
+                    $first = $row["first_name"];
+                    $last  = $row["last_name"];
+
+                    // Feedback for end user
+                    echo "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+                }
+            } else {
+                echo "Error in fetch ".$sqlite_db->lastErrorMsg();
+            }
+            break;
+    }
+}
+
+// This is used later on in the index.php page
+// Setting it here so we can close the database connection in here like in the rest of the source scripts
+$query  = "SELECT COUNT(*) FROM users;";
+$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+$number_of_rows = mysqli_fetch_row( $result )[0];
+
+mysqli_close($GLOBALS["___mysqli_ston"]);
+?>
+\end{lstlisting}
+\noindent The medium level code handles the user lookup in a similar way to the previous level but adds some basic security measures. Firstly, instead of \$\_REQUEST, the application now retrieves the id parameter from \$\_POST when the form is submitted.
+
+\noindent Moreover, the function mysqli\_real\_escape\_string() is applied to the id parameter. However, this sanitization is ineffective because the id value is not enclosed in quotes and is inserted directly into the statement. As a result, an attacker can still append SQL keywords, and the database system will interpret the injected input as valid SQL.
+
+\noindent Even though the id input in the frontend has been changed to checkbox, this can be bypassed by using Burp Suite to intercept the request to modify the input parameter id and send the request. In conclusion, our final query would be the same as one for the previous level which just needs to remove the first ' to become "1 UNION SELECT user, password from users\#"
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/sqli_med_res.png} 
+\end{figure}
+
+\subsection{High level}
+\begin{lstlisting}   
+<?php
+
+if( isset( $_SESSION [ 'id' ] ) ) {
+    // Get input
+    $id = $_SESSION[ 'id' ];
+
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            // Check database
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query ) or die( '<pre>Something went wrong.</pre>' );
+
+            // Get results
+            while( $row = mysqli_fetch_assoc( $result ) ) {
+                // Get values
+                $first = $row["first_name"];
+                $last  = $row["last_name"];
+
+                // Feedback for end user
+                echo "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+            }
+
+            ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);        
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
+
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+            #print $query;
+            try {
+                $results = $sqlite_db_connection->query($query);
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage();
+                exit();
+            }
+
+            if ($results) {
+                while ($row = $results->fetchArray()) {
+                    // Get values
+                    $first = $row["first_name"];
+                    $last  = $row["last_name"];
+
+                    // Feedback for end user
+                    echo "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+                }
+            } else {
+                echo "Error in fetch ".$sqlite_db->lastErrorMsg();
+            }
+            break;
+    }
+}
+?>
+\end{lstlisting}
+\noindent The high level code retrieves and displays user information based on an ID stored in the server-side session rather than taking input directly from a user request. It first checks whether the \$\_SESSION['id'] variable is set, ensuring that the user ID is controlled by the application.
+
+\noindent Once the session ID is obtained, the code determines which database system is in use and executes the same SQL query accordingly. The query selects the first\_name and last\_name fields from the users table where the user\_id matches the session value and limits the result to a single row.
+
+\noindent Although the ID is obtained from the session rather than directly from user input, the SQL query is still vulnerable. The session value is inserted into the query without proper sanitization and is enclosed in quotes, similar to the low level implementation. Because the application allows users to modify their ID, an attacker can manipulate the session value and indirectly influence the SQL query. As a result, SQL injection remains possible, and the same attack technique used in the low level can still be applied.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/sqli_res_high.png} 
+\end{figure}

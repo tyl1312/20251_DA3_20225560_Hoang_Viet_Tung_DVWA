@@ -1,0 +1,9 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'Chapter/DVWA.blg'
+[276] biber-MSWIN64:342> INFO - === 
+[446] Biber.pm:421> INFO - Reading 'Chapter/DVWA.bcf'
+[552] Biber.pm:1002> INFO - Found 0 citekeys in bib section 0
+[563] bbl.pm:676> INFO - Writing 'Chapter/DVWA.bbl' with encoding 'UTF-8'
+[564] bbl.pm:779> INFO - Output to Chapter/DVWA.bbl
+[564] Biber.pm:132> WARN - The file 'Chapter/DVWA.bcf' does not contain any citations!
+[564] Biber.pm:134> INFO - WARNINGS: 1

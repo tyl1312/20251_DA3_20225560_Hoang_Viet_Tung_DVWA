@@ -1,0 +1,77 @@
+\subsection{Overview}
+Reflected attacks are those where the injected script is reflected off the web server, such as in an error message, search result, or any other response that includes some or all of the input sent to the server as part of the request. Reflected attacks are delivered to victims via another route, such as in an e-mail message, or on some other website. When a user is tricked into clicking on a malicious link, submitting a specially crafted form, or even just browsing to a malicious site, the injected code travels to the vulnerable web site, which reflects the attack back to the user’s browser. The browser then executes the code because it came from a “trusted” server.  
+
+\noindent \textbf{Objective:} Execute a malicious script in victim's browser
+
+\newpage
+\subsection{Low level}
+\begin{lstlisting}
+<?php
+
+header ("X-XSS-Protection: 0");
+
+// Is there any input?
+if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
+    // Feedback for end user
+    echo '<pre>Hello ' . $_GET[ 'name' ] . '</pre>';
+}
+?>
+\end{lstlisting}
+\noindent The code takes represents a simple greeting feature. At the beginning, the application disables the browser’s built-in XSS filter by setting the X-XSS-Protection header to 0, ensuring that the application is vulnerable to XSS attacks.
+
+\noindent The code then checks whether the name parameter exists in the \$\_GET array and is not null. If satisfied, the value of \$\_GET['name'] is directly concatenated into the HTML output and displayed to the user. We can see that user input is directly echoed without sanitization. As a result, any input supplied by the user is reflected directly into the web page. For example, if we enter "<script>alert(1)</script>", it will be rendered as "<pre>Hello <script>alert(1)</script></pre>". The browser will then interpret and execute the injected JavaScript, causing a popup box displaying the number 1.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss2_res.png}
+\end{figure}
+
+\newpage
+\subsection{Medium level}
+\begin{lstlisting}
+<?php
+
+header ("X-XSS-Protection: 0");
+
+// Is there any input?
+if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
+    // Get input
+    $name = str_replace( '<script>', '', $_GET[ 'name' ] );
+
+    // Feedback for end user
+    echo "<pre>Hello {$name}</pre>";
+}
+?>
+\end{lstlisting}
+\noindent The overall logic flow remains unchanged from the previous level, with the main difference being the addition of a basic input filter. The application attempts to prevent XSS attacks by removing the literal <script> tag from user input before displaying it in the response. However, since XSS attacks do not require the use of <script> tags to execute JavaScript, other HTML elements and event attributes can be abused to achieve the same result, such as onload, onerror, or onmouseover.
+
+\noindent As a result, the filter can be bypassed using alternative payloads. For example, injecting <svg onload=alert(1)> will still execute JavaScript when the page is rendered, demonstrating that the application remains vulnerable to reflected XSS despite the added filtering step.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss2_res2.png} 
+\end{figure}
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+
+header ("X-XSS-Protection: 0");
+
+// Is there any input?
+if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
+    // Get input
+    $name = preg_replace( '/<(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i', '', $_GET[ 'name' ] );
+
+    // Feedback for end user
+    echo "<pre>Hello {$name}</pre>";
+}
+
+?>
+\end{lstlisting}
+\noindent The high level code keeps the same overall execution flow but strengthens the input filtering logic. The application applies a regular expression using preg\_replace() to remove any input that resembles the word script, even if the characters are separated or written in different cases.
+
+\noindent Here, it attempts to remove <script> tags and any obfuscated or mixed casing variation of it. However, like we say for the previous level, there are other ways to exploit XSS. As a result, for this level, we will use <svg onload=alert(1)> as our payload again.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{Figure/xss2_res2.png} 
+\end{figure}
