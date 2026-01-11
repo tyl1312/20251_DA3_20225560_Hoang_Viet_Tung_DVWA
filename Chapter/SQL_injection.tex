@@ -88,6 +88,21 @@ SELECT first\_name, last\_name FROM users WHERE user\_id = '1';. However, the in
   \includegraphics[width=0.7\linewidth]{Figure/sqli_low_res2.png} 
 \end{figure}
 
+\noindent \textbf{Patching:}
+\noindent The proper fix for SQL injection is to stop concatenating user input into SQL queries and use prepared statements.
+
+\noindent A prepared statement, (not to be confused with parameterized query) is a feature where the database pre-compiles SQL code and stores the results, separating it from data. Benefits of prepared statements are:[1]
+
+\noindent Benefits of prepared statements are efficiency, because they can be used repeatedly without re-compiling, and security, by reducing or eliminating SQL injection attacks.
+
+\noindent For MySQL (mysqli), the key changes are:
+\begin{lstlisting}
+$stmt = mysqli_prepare($conn, "SELECT first_name, last_name FROM users WHERE user_id = ?");
+mysqli_stmt_bind_param($stmt, "s", $id);
+mysqli_stmt_execute($stmt);
+\end{lstlisting}
+\noindent With a prepared statement, an input like "1' UNION SELECT user, password FROM users\#" is handled as a literal string value for user\_id, so the injected SQL is not executed.
+
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
@@ -161,6 +176,9 @@ mysqli_close($GLOBALS["___mysqli_ston"]);
   \includegraphics[width=0.7\linewidth]{Figure/sqli_med_res.png} 
 \end{figure}
 
+\noindent \textbf{Patching:}
+\noindent Since the program logic remains unchanged, we can apply the same patching method as in the low level: prepared statements. This ensures that user input is never directly concatenated into SQL queries, effectively mitigating SQL injection vulnerabilities.
+
 \subsection{High level}
 \begin{lstlisting}   
 <?php
@@ -225,3 +243,6 @@ if( isset( $_SESSION [ 'id' ] ) ) {
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/sqli_res_high.png} 
 \end{figure}
+
+\noindent \textbf{Patching:}
+\noindent For the high level, we still reuse the same patching strategy as previous levels: prepared statements. Even if the ID comes from \$\_SESSION, it should be treated as untrusted because attackers may influence session state through application logic.

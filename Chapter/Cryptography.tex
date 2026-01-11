@@ -142,7 +142,9 @@ Since the code uses XOR based encryption, it is easy to retrieve the key because
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/cryp2.png} 
 \end{figure}
-\noindent Here, we can see the result is "wachtwoord" repeating itself.
+\noindent Here, we can see the result is "wachtwoord" repeating itself. Now that we have the key, we can use it to decode the intercepted message and log in.
+
+\noindent \textbf{Patching:} With cryptography section, the best practice is to use well-established libraries and algorithms rather than implementing custom schemes. Avoid using weak or outdated algorithms, and ensure that keys are generated securely and managed properly. Regularly update cryptographic libraries to benefit from the latest security patches and improvements.
 
 \newpage
 \subsection{Medium level}
@@ -198,7 +200,8 @@ $html = "
         <strong>Sooty (admin), session expired</strong>
         </p>
         <p>
-<textarea style='width: 600px; height: 56px'>e287af752ed3f9601befd45726785bd9b85bb230876912bf3c66e50758b222d0837d1e6b16bfae07b776feb7afe576305aec34b41499579d3fb6acc8dc92fd5fcea8743c3b2904de83944d6b19733cdb48dd16048ed89967c250ab7f00629dba</textarea>
+<textarea style='width: 600px; height: 56px'>e287af752ed3f9601befd45726785bd9b85bb230876912bf3c66e50758b222d0837d1e6b16bfae07b776feb
+7afe576305aec34b41499579d3fb6acc8dc92fd5fcea8743c3b2904de83944d6b19733cdb48dd16048ed89967c250ab7f00629dba</textarea>
         </p>
         <p>
         <strong>Sweep (user), session expired</strong>
@@ -265,6 +268,8 @@ echo "
 \noindent After decryption, the resulting string is parsed as JSON. The code expects the decrypted token to contain a JSON object with fields such as user, ex, level and bio. If the JSON cannot be decoded, an exception is thrown.
 
 \noindent The user is considered an authenticated administrator only if user equals "sweep", the expiration time ex is in the future, and level equals "admin". If these conditions are met, a success message is displayed; otherwise, a generic login success message is shown.
+
+\noindent \textbf{Patching:} Like in the low level, it is recommended to use well-established libraries and algorithms rather than implementing custom schemes. Additionally, avoid using ECB mode for encryption, as it is vulnerable to various attacks; consider using more secure modes like CBC or GCM with proper initialization vectors (IVs).
 
 \newpage
 \subsection{High level}

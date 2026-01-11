@@ -25,6 +25,13 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
   \includegraphics[width=0.7\linewidth]{Figure/xss2_res.png}
 \end{figure}
 
+\noindent \textbf{Patching:}
+\noindent Similar to Stored XSS, we can mitigate the vulnerability here with output encoding. Therefore, we will utilize htmlspecialchars() to encode special HTML characters into their corresponding entities before rendering them in the browser.
+\begin{lstlisting}
+$name = htmlspecialchars($name);
+\end{lstlisting}
+\noindent With htmlspecialchars(), if an attacker inputs <svg onload=alert(1)>, it becomes "\&lt;svg onload=alert(1)\&gt;", so it will be displayed as plain text and will not execute.
+
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
@@ -49,6 +56,12 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/xss2_res2.png} 
 \end{figure}
+
+\noindent \textbf{Patching:}
+\noindent Since the program logic remains unchanged, we can use the same method as in the low level: output encoding using htmlspecialchars(). 
+\begin{lstlisting}
+$name = htmlspecialchars($name);
+\end{lstlisting}
 
 \newpage
 \subsection{High level}
@@ -75,3 +88,9 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/xss2_res2.png} 
 \end{figure}
+
+\noindent \textbf{Patching:}
+\noindent For the high level, we still reuse the same patching strategy as previous levels: output encoding using htmlspecialchars(). Regex-based filtering can be bypassed by other tags and event handlers, but encoding prevents all HTML from being interpreted.
+\begin{lstlisting}
+$name = htmlspecialchars($name);
+\end{lstlisting}

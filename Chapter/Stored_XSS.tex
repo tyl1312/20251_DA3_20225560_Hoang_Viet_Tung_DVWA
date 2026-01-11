@@ -48,6 +48,20 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
   \includegraphics[width=0.7\linewidth]{Figure/xss3_res2.png} 
 \end{figure}
 
+\noindent \textbf{Patching:}
+\noindent To mitigate Stored XSS in this level, we need to encode data on output which means non-whitelisted values should be converted into HTML entities such as:
+\begin{lstlisting}
+  < converts to: &lt;
+  > converts to: &gt;
+\end{lstlisting}
+\noindent To do so, we will use PHP’s built-in function htmlspecialchars() on both fields before rendering them in the HTML page, which effectively neutralizes any embedded scripts.
+
+\begin{lstlisting}
+$message = htmlspecialchars($message);
+$name = htmlspecialchars($name);
+\end{lstlisting}
+\noindent This function converts special HTML characters into their corresponding HTML entities. For example, if an attacker inputs <img src=x onerror=alert(1)>, after applying htmlspecialchars(), it becomes "\&lt;img src=x onerror=alert(1)\&gt;", so the browser renders it as plain text instead of executing it.
+
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
@@ -78,7 +92,7 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
 
 \noindent In contrast, the name field is only partially sanitized. The application removes the literal <script> tag using str\_replace() and escapes special characters with mysqli\_real\_escape\_string(). As a result, it is still vulnerable to XSS attacks.
 
-\noindent While it is true that <script> tag is now unusable, however, similar to reflected XSS scenarios, attackers can still exploit alternative HTML tags or event attributes such as <img>, <svg>, or <iframe> to execute malicious scripts.
+\noindent While it is true that <script> tag is now unusable, attackers can still exploit alternative HTML tags or event attributes such as <img>, <svg>, or <iframe> to execute malicious scripts.
 
 \noindent To demonstrate this, an XSS payload such as <img src=x onerror=alert(1)> was submitted in the name field with a benign message “hi”. Initially, the name input field only accepts up to 10 characters, which prevents direct submission of the payload. However, by using browser developer tools to modify the input field’s length attribute to allow up to 50 characters, the payload can be successfully injected and executed.
 \begin{figure}[H]
@@ -95,6 +109,12 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/xss_res_med2.png} 
 \end{figure}
+
+\noindent \textbf{Patching:}
+\noindent We use the same method as in the low level output encoding using htmlspecialchars(). However, at this level the message field is already encoded in the provided code, we only need to apply encoding to the name field before storing and displaying it.
+\begin{lstlisting}
+$name = htmlspecialchars($name);
+\end{lstlisting}
 
 \newpage
 \subsection{High level}
@@ -126,3 +146,9 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
 \noindent Compared to the previous security level, the input handling of the message field and overall flow logic remains unchanged. The only difference lies in the sanitization of the name field. Instead of a simple string replacement for the <script> tag, the application now uses a regular expression with preg\_replace() to remove any obfuscated variations of it.
 
 \noindent As you can see, other HTML tags and JavaScript execution vectors, such as event handlers or non-script tags, are not filtered making the name field still vulnerable. Hence, we will try the same payload as the previous level <img src=x onerror=alert(1);> and we also need to change max length of name field to 50.
+
+\noindent \textbf{Patching:}
+\noindent For the high level, we will reuse the same method as previous levels: output encoding using htmlspecialchars(). Since the message field is already sanitized, we will only apply encoding to the name field.
+\begin{lstlisting}
+$name = htmlspecialchars($name);
+\end{lstlisting}

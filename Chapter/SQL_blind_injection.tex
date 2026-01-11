@@ -90,6 +90,16 @@ if( isset( $_GET[ 'Submit' ] ) ) {
 \end{figure}
 \noindent Here, we see that only 4 request with status 200 OK. From that, we conclude that the name of the database is "dvwa"
 
+\noindent \textbf{Patching:}
+\noindent For blind SQL injection, we apply the same patching method as SQL injection: stop concatenating user input into SQL queries and use prepared statements.
+
+\begin{lstlisting}
+$stmt = mysqli_prepare($conn, "SELECT first_name, last_name FROM users WHERE user_id = ?");
+mysqli_stmt_bind_param($stmt, "s", $id);
+mysqli_stmt_execute($stmt);
+\end{lstlisting}
+\noindent With a prepared statement, payloads such as 1' AND length(database())=4\# are treated as data instead of SQL logic, so the application response can no longer be manipulated.
+
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
@@ -166,6 +176,9 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 \end{figure}
 \noindent Here, we notice that the browser is returning "User ID exists in the database" suggesting that the payload has succeeded. Therefore, with the brute force part, we can use the same payload as the low level but remember to drop the first '
 
+\noindent \textbf{Patching:}
+\noindent Since the program logic remains unchanged, we can apply the same patching method as in the low level: prepared statements. This ensures that user input is never directly concatenated into SQL queries, effectively mitigating SQL injection vulnerabilities.
+
 \subsection{High level}
 \begin{lstlisting}
 <?php
@@ -241,3 +254,6 @@ if( isset( $_COOKIE[ 'id' ] ) ) {
   \includegraphics[width=\linewidth]{Figure/sqlib_high1.png} 
 \end{figure}
 \noindent As you can see, the result is still the same as the low level indicating that we can perform SQL blind injection on the application. For the brute force part, we will do the same as the low level as now we have proved that our payload is still working normally here.
+
+\noindent \textbf{Patching:}
+\noindent For the high level, we apply the same patching strategy: prepared statements. Although the input is retrieved from a cookie, cookies are stored on the user’s browser and can be modified by an attacker. Therefore, this data cannot be trusted and must not be directly inserted into SQL queries. Prepared statements will prevent SQL injection by ensuring that user input is treated only as data, not as executable SQL code.

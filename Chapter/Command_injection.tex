@@ -29,7 +29,7 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 
 \noindent Since our DVWA runs on Ubuntu (a Linux operating system), when we enter an IP address, it will run the command "ping -c 4 <ip\_address>". As a result, in order to inject new command, we need to know how to execute multiple command in a single line. In linux, there are several ways to achieve that such as using ; or \&\& after the first command which is the ping command in this scenario. To be more detailed, we will input "127.0.0.1; ls" which will turn into "ping 127.0.0.1; ls
 
-\subsubsection{Patching}
+\noindent \textbf{Patching:}
 \begin{lstlisting}
 <?php
 if (isset($_POST['Submit'])) {
@@ -108,7 +108,7 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
   \includegraphics[width=0.7\linewidth]{Figure/com_res_med.png} 
 \end{figure}
 
-\subsubsection{Patching}
+\noindent \textbf{Patching:}
 \noindent To prevent command injection at the medium security level, the same patching approach used in the previous level is applied, as there are no significant changes in the overall program logic.
 
 \newpage
@@ -156,6 +156,6 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
   \includegraphics[width=0.7\linewidth]{Figure/com_res_high.png} 
 \end{figure}
 
-\subsubsection{Patching}
+\noindent \textbf{Patching:}
 
 \noindent For the high security level, the previously applied patching strategy is retained, since the application only introduces change in the blacklist instead of the program logic. As such, strict input validation and proper argument escaping remain effective in mitigating command injection vulnerabilities.

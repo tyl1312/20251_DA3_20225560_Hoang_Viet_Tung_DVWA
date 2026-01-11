@@ -39,6 +39,9 @@ exit;
 \end{figure}
 \noindent We get status 302 Found suggesting that it has been successfully redirected.
 
+\noindent \textbf{Patching:}
+To mitigate the vulnerability, we need to prevent unvalidated user-controlled redirects. Instead of directly using the redirect parameter in the Location header, the application should enforce a strict allowlist of permitted redirect destinations or trusted domains. Additionally, the input should be validated to ensure it does not contain external URLs, protocol handlers, or malformed values. By restricting redirects to known, approved targets, the application can effectively prevent open redirect attacks.
+
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
@@ -75,6 +78,9 @@ exit;
 \end{figure}
 \noindent Here, we also get status 302 Found suggesting successful redirection.
 
+\noindent \textbf{Patching:}
+A secure patch should not rely on blacklisting specific strings such as http:// or https://, since this approach can be bypassed using relative URLs or other URL parsing tricks. Instead, we can use the same method as low level: implementing a strict allowlist of valid redirect targets. Any value not present in this allowlist should be rejected or redirected to a safe default page.
+
 \newpage
 \subsection{High level}
 \begin{lstlisting}
@@ -110,3 +116,26 @@ exit;
   \includegraphics[width=\linewidth]{Figure/http_high2.png} 
 \end{figure}
 \noindent Status 302 Found suggests that our redirect value has worked.
+
+\noindent \textbf{Patching:}
+Here, we need to stop partial string matching and instead perform an exact comparison against a predefined allowlist. Rather than checking whether the redirect parameter merely contains "info.php", we need to ensure that the value exactly matches an expected internal path (for example, /info.php).
+\begin{lstlisting}
+<?php
+if (isset($_GET['redirect']) && $_GET['redirect'] !== '') {
+
+    //Only allow redirect to info.php
+    if ($_GET['redirect'] === 'info.php') {
+        header('Location: info.php');
+        exit;
+    } else {
+        http_response_code(500);
+        echo '<p>You can only redirect to the info page.</p>';
+        exit;
+    }
+}
+
+http_response_code(500);
+echo '<p>Missing redirect target.</p>';
+exit;
+?>
+\end{lstlisting}

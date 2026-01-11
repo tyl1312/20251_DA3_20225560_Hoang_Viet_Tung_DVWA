@@ -27,6 +27,30 @@ $file = $_GET[ 'page' ];
   \includegraphics[width=0.7\linewidth]{Figure/fi_res_low.png} 
 \end{figure}
 
+\noindent \textbf{Patching:}
+\noindent The most effective fix for low-level file inclusion is to use a whitelist approach. Rather than trying to block malicious patterns, explicitly define which files are allowed to be included:
+\begin{lstlisting}
+<?php
+
+$allowed_files = array(
+    'file1.php',
+    'file2.php',
+    'file3.php',
+    'include.php'
+);
+
+$file = $_GET['page'];
+
+if (in_array($file, $allowed_files)) {
+    include $file;
+} else {
+    echo "ERROR: File not found!";
+}
+
+?>
+\end{lstlisting}
+\noindent This ensures that only explicitly approved files can be included, preventing any arbitrary file access. Additionally, input validation should be implemented using functions like \verb|basename()| to extract only the filename from user input, removing any directory traversal attempts.
+
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
@@ -46,6 +70,9 @@ $file = str_replace( array( "../", "..\\" ), "", $file );
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/fi_res_med.png} 
 \end{figure}
+
+\noindent \textbf{Patching:}
+\noindent To prevent file inclusion at the medium level, the same patching approach as in low level is applied because the core program logic has not changed. Enforce a whitelist of allowed files so that only explicitly allowed files can ever be included.
 
 \newpage
 \subsection{High level}
@@ -69,3 +96,6 @@ if( !fnmatch( "file*", $file ) && $file != "include.php" ) {
   \centering
   \includegraphics[width=0.7\linewidth]{Figure/fi_res_high.png} 
 \end{figure}
+
+\noindent \textbf{Patching:}
+\noindent For the high level, the patching strategy remains unchanged to the previous levels: keep a strict whitelist of allowed files. Because the vulnerable logic only tweaks the blacklist pattern, the same whitelist fix blocks all inclusion vectors.
