@@ -28,14 +28,73 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/fu_res.png}
+  \includegraphics[width=0.85\linewidth]{Figure/fu_res.png}
 \end{figure}
 
 \noindent As you can see, the message indicates that the file is uploaded. Now, we will try to get access to the file on the browser to see if the file works normally
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/fu_res_low.png}
+  \includegraphics[width=0.85\linewidth]{Figure/fu_res_low.png}
 \end{figure}
+\noindent As expected, we can see the content of /etc/passwd file, indicating that our PHP shell is successfully executed on the server.
+
+\noindent \textbf{Patching:} To mitigate the risks associated with unrestricted file uploads, we are going to implement some extra security measures.
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'Upload' ] ) ) {
+    // File information
+    $uploaded_name = $_FILES[ 'uploaded' ][ 'name' ];
+    $uploaded_ext  = substr( $uploaded_name, strrpos( $uploaded_name, '.' ) + 1);
+    $uploaded_size = $_FILES[ 'uploaded' ][ 'size' ];
+    $uploaded_type = $_FILES[ 'uploaded' ][ 'type' ];
+    $uploaded_tmp  = $_FILES[ 'uploaded' ][ 'tmp_name' ];
+
+    // Where are we going to be writing to?
+    $target_path   = DVWA_WEB_PAGE_TO_ROOT . 'hackable/uploads/';
+    //$target_file   = basename( $uploaded_name, '.' . $uploaded_ext ) . '-';
+    $target_file   =  md5( uniqid() . $uploaded_name ) . '.' . $uploaded_ext;
+    $temp_file     = ( ( ini_get( 'upload_tmp_dir' ) == '' ) ? ( sys_get_temp_dir() ) : ( ini_get( 'upload_tmp_dir' ) ) );
+    $temp_file    .= DIRECTORY_SEPARATOR . md5( uniqid() . $uploaded_name ) . '.' . $uploaded_ext;
+
+    // Is it an image?
+    if( ( strtolower( $uploaded_ext ) == 'jpg' || strtolower( $uploaded_ext ) == 'jpeg' || strtolower( $uploaded_ext ) == 'png' ) &&
+        ( $uploaded_size < 100000 ) &&
+        ( $uploaded_type == 'image/jpeg' || $uploaded_type == 'image/png' ) &&
+        getimagesize( $uploaded_tmp ) ) {
+
+        // Strip any metadata, by re-encoding image (Note, using php-Imagick is recommended over php-GD)
+        if( $uploaded_type == 'image/jpeg' ) {
+            $img = imagecreatefromjpeg( $uploaded_tmp );
+            imagejpeg( $img, $temp_file, 100);
+        }
+        else {
+            $img = imagecreatefrompng( $uploaded_tmp );
+            imagepng( $img, $temp_file, 9);
+        }
+        imagedestroy( $img );
+
+        // Can we move the file to the web root from the temp folder?
+        if( rename( $temp_file, ( getcwd() . DIRECTORY_SEPARATOR . $target_path . $target_file ) ) ) {
+            // Yes!
+            echo "<pre><a href='{$target_path}{$target_file}'>{$target_file}</a> succesfully uploaded!</pre>";
+        }
+        else {
+            // No
+            echo '<pre>Your image was not uploaded.</pre>';
+        }
+
+        // Delete any temp files
+        if( file_exists( $temp_file ) )
+            unlink( $temp_file );
+    }
+    else {
+        // Invalid file
+        echo '<pre>Your image was not uploaded. We can only accept JPEG or PNG images.</pre>';
+    }
+}
+?> 
+\end{lstlisting}
+\noindent Looking at the patched code, we can see that several security measures have been implemented to enhance the file upload process. First, the code collects detailed information about the uploaded file, including its name, extension, size, MIME type, and temporary location. The target filename is generated using a hash function md5 combined with a unique identifier to prevent filename collisions and avoid using user-supplied names directly. Next, the code performs multiple validation checks such as verify the file extension against a predefined whitelist, make sure file size is below 100KB, validate the MIME type, and use getimagesize() to confirm the file is a valid image. If all checks pass, the code re-encode the image with imagecreatefromjpeg() and imagejpeg() to strip embedded PHP metadata if exist. Finally, it renames the temporary file to its final destination in the upload directory. If any validation fails, an error message is displayed, preventing the upload of potentially malicious files.
 
 \newpage
 \subsection{Medium level}
@@ -77,9 +136,81 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 \noindent In this level, basic validation is added to the file upload process. After the user clicks the Upload button, the code defines the upload directory and the final file path using the original filename like in the low level. However, the application now collects information about the uploaded file, including its name, MIME type, and size. After that, the code checks whether the uploaded file is JPEG or PNG image and whether its size is smaller than 100 KB. Only if both conditions are met, does the code attempt to move the file from its temporary location to the upload directory. If the upload succeeds, a success message is displayed; otherwise, an error message is shown.
 
 \noindent When we try to upload our shell.php file, it clearly fails.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/fu_res_med.png}
+\end{figure}
+\noindent So, we open Burp Suite to view that last request to see why it fails. As expected, the Content-Type of the file is neither "image/png" nor "image/jpeg" but "application/octet-stream" instead. Therefore, in order to bypass the security check, we need to change Content-Type header to "image/png".
+
+\noindent \textbf{Patching:} To enhance security at the medium level, we will implement stronger validation checks for file uploads. More specifically, we will apply the same patching approach used in low level because the core program logic has not changed. This includes validating file extensions, checking MIME types, enforcing file size limits, and re-encoding images to strip any embedded metadata. These measures help ensure that only safe image files are uploaded, mitigating the risk of malicious file uploads.
+
+\newpage
+\subsection{High level}
+\begin{lstlisting}
+<?php
+if( isset( $_POST[ 'Upload' ] ) ) {
+    // Where are we going to be writing to?
+    $target_path  = DVWA_WEB_PAGE_TO_ROOT . "hackable/uploads/";
+    $target_path .= basename( $_FILES[ 'uploaded' ][ 'name' ] );
+
+    // File information
+    $uploaded_name = $_FILES[ 'uploaded' ][ 'name' ];
+    $uploaded_ext  = substr( $uploaded_name, strrpos( $uploaded_name, '.' ) + 1);
+    $uploaded_size = $_FILES[ 'uploaded' ][ 'size' ];
+    $uploaded_tmp  = $_FILES[ 'uploaded' ][ 'tmp_name' ];
+
+    // Is it an image?
+    if( ( strtolower( $uploaded_ext ) == "jpg" || strtolower( $uploaded_ext ) == "jpeg" || strtolower( $uploaded_ext ) == "png" ) &&
+        ( $uploaded_size < 100000 ) &&
+        getimagesize( $uploaded_tmp ) ) {
+
+        // Can we move the file to the upload folder?
+        if( !move_uploaded_file( $uploaded_tmp, $target_path ) ) {
+            // No
+            echo '<pre>Your image was not uploaded.</pre>';
+        }
+        else {
+            // Yes!
+            echo "<pre>{$target_path} succesfully uploaded!</pre>";
+        }
+    }
+    else {
+        // Invalid file
+        echo '<pre>Your image was not uploaded. We can only accept JPEG or PNG images.</pre>';
+    }
+}
+
+?> 
+\end{lstlisting}
+\noindent This implementation adds stronger security checks than previous levels. It extracts the file extension using strrpos() and substr(), then verifies that the extension is jpg, jpeg, or png using strtolower() to avoid case-based bypasses.
+
+\noindent Most importantly, getimagesize() is used to ensure the uploaded file is a real image by checking its metadata. This prevents attackers from uploading malicious files disguised as images. Together with the file size limit ,these checks provide better protection against unsafe file uploads.
+
+\noindent Now, when we try to upload our shell.php file after changing the Content-Type header to "image/png", it fails as expected.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/fu_high1.png}
+\end{figure}\
+\noindent In order to bypass the getimagesize() check, first we will upload a valid image file to get a valid image header and a successful response captured by Burp Suite.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/fu_high2.png}
+\end{figure}\
+\noindent The captured request is then sent to Burp Repeater for modification. Here, we apply a technique known as null byte injection, which exploits the fact that null bytes \%00 are interpreted as string terminators in C-based languages. By inserting a null byte between the valid image filename and the embedded PHP code, getimagesize() processes only the valid image portion of the file, while the server still retains the entire file contents. As a result, we are able to construct a malicious file named images.php\%00.png, where the null byte causes the image validation to succeed while allowing the PHP code to remain embedded within the file.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/fu_res_med.png}
+  \includegraphics[width=0.85\linewidth]{Figure/fu_high3.png}
 \end{figure}
-\noindent So, we open Burp Suite to view that last request to see why it fails. As expected, the Content-Type of the file is neither "image/png" nor "image/jpeg" but "application/octet-stream" instead. Therefore, in order to bypass the security check, we need to change Content-Type header to "image/png".
+\noindent In addition, we also need to add our malicious payload to content body of the file to ensure that the server executes our PHP code when the file is accessed.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/fu_high4.png}
+\end{figure}
+\noindent Finally, we send the modified request. The server processes the file, and we receive a success message indicating that "images.php\%00.png" was uploaded successfully.
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.85\linewidth]{Figure/fu_high5.png}
+\end{figure}
+
+\noindent \textbf{Patching:} For high level patching, we will implement the same measures used in previous levels to ensure robust security against file upload vulnerabilities. This includes validating file extensions against a whitelist, checking MIME types, enforcing file size limits, and re-encoding images to strip any embedded metadata. 

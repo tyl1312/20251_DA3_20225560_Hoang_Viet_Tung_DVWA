@@ -9,7 +9,7 @@ A brute force attack uses trial-and-error to guess login info, encryption keys, 
 After we click "View help", it is said that the only difference is extra two second wait for incorrect login. Therefore, we will combine the methods used for both levels.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/brute1.png}
+  \includegraphics[width=0.85\linewidth]{Figure/brute1.png}
 \end{figure}
 
 \begin{lstlisting}
@@ -50,7 +50,7 @@ if( isset( $_GET[ 'Login' ] ) ) {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/brute10.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/brute10.png} 
 \end{figure}
 
 \noindent Then, we send this request to Burp Intruder, a tool for automating customized attacks against web applications which enables you to configure attacks that send the same HTTP request over and over again, inserting different payloads into predefined positions each time. Here, we will add the \$ sign at the front and behind the password parameter representing the payload position. Moreover, since there is only one payload, we will choose the Sniper type attack. In the payload part, we will paste a list of passwords that will be used which contains the correct password as well (in this scenario is "password"). Then we press "Start attack"
@@ -60,6 +60,8 @@ if( isset( $_GET[ 'Login' ] ) ) {
   \includegraphics[height=0.2\textheight]{Figure/brute3.png} 
 \end{figure}
 \noindent As you can see, the attempt with "password" is the only with different length with others, implying that "password" is the correct password for username "user"
+
+\noindent \textbf{Patching}: To prevent brute force attempts, there are several effective security measures that can be implemented such as IP blocking, account lockout, CAPTCHA challenges, rate limiting, and multi-factor authentication (MFA). These measures help to limit the number of login attempts, verify user authenticity, and make it more difficult for attackers to gain unauthorized access through brute force methods.
 
 \newpage
 \subsection{High level}
@@ -114,7 +116,7 @@ generateSessionToken();
 
 \noindent The most important new feature is the addition of anti CSRF (Cross-Site Request Forgery) protection. The line "checkToken(\$\_REQUEST['user\_token'], \$\_SESSION['session\_token'], 'index.php');" checks whether the token sent by the user matches the token stored on the server. If they do not match, the request is rejected and the user is redirected back to the login page. This helps prevent attackers from tricking users into submitting hidden login requests.
 
-\noindent Another notable difference is that the application now applies multiple sanitization steps to both fields. First, stripslashes() function removes backslashes that may appear in user input. For example, if the input is \texttt{O\'Reilly}, stripslashes() converts it to O'Reilly, helping normalize the input. Next, mysqli\_real\_escape\_string() escapes special characters before the input is used in an SQL query. For example, the input "admin' OR '1'='1" becomes \texttt{"admin\' OR \'1\'=\'1"}, preventing the injected SQL code from breaking out of the query string. This helps mitigate SQL injection by ensuring the input is treated as data rather than executable SQL.
+\noindent Another notable difference is that the application now applies multiple sanitization steps to both fields. First, stripslashes() function removes backslashes that may appear in user input. For example, if the input is O\'Reilly, stripslashes() converts it to O'Reilly, helping normalize the input. Next, mysqli\_real\_escape\_string() escapes special characters before the input is used in an SQL query. For example, the input "admin' OR '1'='1" becomes "admin\' OR \'1\'=\'1", preventing the injected SQL code from breaking out of the query string. This helps mitigate SQL injection by ensuring the input is treated as data rather than executable SQL.
 
 \noindent Moreover, a random delay on failed login attempts is introduced. The statement sleep(rand(0, 3)); pauses execution for a random amount of time between 0 and 3 seconds when authentication fails. This technique helps mitigate brute force attacks to some extent by slowing down repeated login attempts, making automated guessing less efficient.
 
@@ -126,12 +128,12 @@ generateSessionToken();
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/brute_high1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/brute_high1.png} 
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/brute_high2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/brute_high2.png} 
 \end{figure}
 
 \noindent As you can see from the second attempt, all of them are attached with a second payload which is the value of user\_token from previous response. And once again, password is the only attempt with both different length and attached with token, indicating that this is the password for user admin
@@ -139,3 +141,5 @@ generateSessionToken();
   \centering
   \includegraphics[height=0.2\textheight]{Figure/brute_high3.png} 
 \end{figure}
+
+\noindent \textbf{Patching}: The patching method here is similar to what have been mentioned in the previous levels such as implementing account lockout, CAPTCHA challenges, rate limiting, and multi-factor authentication (MFA) to prevent brute force attempts.

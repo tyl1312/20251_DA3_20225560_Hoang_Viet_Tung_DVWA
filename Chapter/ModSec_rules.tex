@@ -29,6 +29,23 @@ SecRule IP:FAILED_LOGINS "@gt 5" \
 
 \noindent This rule set implements basic brute force protection. First, SecAction initializes an IP based collection to track each client’s activity. The second rule runs in phase 4, and monitors the server’s response body. When a failed login message is detected, it increments a counter for that IP and sets it to expire after 60 seconds. The final rule checks this counter and, if the number of failed attempts exceeds the threshold, blocks further requests from that IP with a 429 Too Many Requests response, indicating a suspected brute force attack.
 
+\noindent When we try to brute force the login page in DVWA, after 5 failed attempts, ModSecurity will block our request and return status 429 Too Many Requests as shown below:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_brute.png}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_brute1.png}
+\end{figure}
+
+\noindent Moreover, when we take a look at ModSecurity audit log, we can see that the event is logged with a clear message indicating a brute force attempt from our IP address 192.168.54.100.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_brute2.png}
+\end{figure}
+
+\newpage
 \section{Command injection}
 \begin{lstlisting}
     SecRule ARGS|REQUEST_BODY "(;|\||&&|\b(cat|wget|curl|ls|ping|whoami|bash)\b)" \
@@ -44,6 +61,19 @@ SecRule IP:FAILED_LOGINS "@gt 5" \
 
 \noindent If any of these patterns are detected during phase 2 of request processing, after the request body has been read, ModSecurity immediately blocks the request and returns an HTTP 403 Forbidden response. The event is also logged with a critical severity level and a clear message indicating that a command injection attempt was detected.
 
+\noindent When we attempt command injection on the vulnerable page with payload "127.0.0.1; ls", ModSecurity detects and blocks the malicious request:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_com1.png}
+\end{figure}
+
+\noindent The audit log shows that ModSecurity has successfully detected the command injection attempt and blocked it with the message "Command injection detected":
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_com2.png}
+\end{figure}
+
+\newpage
 \section{File inclusion}
 \noindent File inclusion occurs when an attacker is able to manipulate file paths in a web application to include local or remote files that are not intended to be accessed. Common attacks include Local File Inclusion (LFI), where an attacker can access sensitive system files (e.g., /etc/passwd), and Remote File Inclusion (RFI), where remote malicious files are included and executed.
 \begin{lstlisting}
@@ -83,6 +113,21 @@ SecRule REQUEST_URI "file://" \
 
 \noindent The third rule is designed based on the high level of the vulnerability. It will detect the appearance of the file:// protocol in the request URI. Attackers may use this wrapper to force the application to read local files directly. When such a pattern is detected, the rule will block the request.
 
+\noindent Here, we try to perform a local file inclusion attack with "file:///var/www/html/DVWA/hackable/flags/fi.php", ModSecurity blocks the request with a 403 status:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_fi1.png}
+\end{figure}
+
+\noindent The audit log confirms that the file inclusion attempt was detected and blocked:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_fi2.png}
+\end{figure}
+
+\noindent This demonstrates the effectiveness of ModSecurity rules in preventing attackers from accessing sensitive files through directory traversal and other file inclusion techniques.
+
+\newpage
 \section{File upload}
 \noindent File upload vulnerabilities occur when an attacker can upload a file to a web server without proper validation, potentially allowing the upload of malicious files like PHP scripts or malware. Once uploaded, these files can be executed on the server, leading to code execution and potential server compromise. Attackers often attempt to upload files with dangerous extensions like .php, .phtml, .php3, and others.
 \begin{lstlisting}
@@ -120,6 +165,21 @@ SecRule FILES "@rx \.[a-z0-9]{1,10}\.(php|phtml|exe|sh|pl)$" \
 
 \noindent The second and third rule focus the other feature: file extension. While the second one aims for dangerous extensions commonly used for executing code on the server, the third one targets double extensions or null bytes which are often used to bypass simple extension check. Both of them will block the request with status 403 Forbidden if any aforementioned pattern is detected.
 
+\noindent When we attempt to upload a PHP file with malicious content, ModSecurity detects and blocks it:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_fu1.png}
+\end{figure}
+
+\noindent The audit log shows the blocked file upload attempt:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_fu2.png}
+\end{figure}
+
+\noindent This confirms that ModSecurity effectively prevents the upload of dangerous file types that could be executed on the server.
+
+\newpage
 \section{SQL injection}
 Common SQLi techniques include inserting malicious SQL keywords like SELECT, UNION, DROP, INSERT, and using special characters like ', ", --, \#, and ; to modify the behavior of the original query.
 \begin{lstlisting}
@@ -150,6 +210,38 @@ The first one detects SQL special characters such as SQL comment markers(--, \#)
 
 \noindent The second rule focuses on frequently used SQL keyword like select, union, from,... Like the first rule, it applies normalization transformation to counter obfuscation technique. The rule will block with status 403 Forbidden as soon as a keyword is detected
 
+\noindent When we attempt a SQL injection with payload used in SQL injection vulnerability 
+"1' UNION SELECT user, password from users\#", ModSecurity blocks the request with a 403 status:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_sqli1.png}
+\end{figure}
+
+\noindent The audit log confirms the SQL injection detection in both special character and keyword:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_sqli.png}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_sqli2.png}
+\end{figure}
+
+\noindent This demonstrates that ModSecurity effectively prevents SQL injection attacks by blocking requests containing SQL keywords and special characters commonly used in such attacks.
+
+\noindent Moreover, when we try to perform SQL blind injection with "1' and length(database())=4\#", ModSecurity will also block the request as shown below:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_sqli3.png}
+\end{figure}
+
+\noindent The audit logs also confirm the detection of SQL special characters in the payload
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_sqli4.png}
+\end{figure}
+
+\newpage
 \section{XSS}
 Cross-Site Scripting (XSS) vulnerabilities occur when user-controlled input is inserted into a webpage without proper sanitization. This allows attackers to inject malicious JavaScript payloads, which can execute in the victim's browser. Attackers frequently use payloads containing HTML tags, JavaScript functions, or DOM manipulation APIs.
 \begin{lstlisting}
@@ -189,4 +281,27 @@ SecRule ARGS|ARGS_NAMES|REQUEST_COOKIES "@rx (?i)\b(document\.cookie|document\.d
 \noindent The security rules shown in the images implement a layered approach to detecting XSS attacks. First, a special-character rule blocks any request containing HTML tag brackets such as “<" and “>”, which are commonly used for HTML tags creation. 
 \noindent The second rule focuses on detecting high-risk and frequently used keywords such as script, alert, prompt, onload, onclick, and javascript:.  
 \noindent The third rule addresses DOM-based XSS attacks, which manipulate the browser’s Document Object Model. It searches for dangerous JavaScript objects and methods such as document.cookie, document.write, innerHTML, and window.location, which are frequently used.
+\noindent When we try to perform an XSS attack with payload <script>alert(1)</script>, ModSecurity blocks the request with a 403 status:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_xss1.png}
+\end{figure}
+
+\noindent The audit log shows the detected XSS payload:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/mod_xss.png}
+\end{figure}
+
+\noindent ModSecurity successfully blocks XSS payloads before they can be rendered in the browser, preventing malicious scripts from executing in the victim's session.
+
+\newpage
+\section{Other vulnerabilities}
+\noindent However, there are still several vulnerabilities in DVWA for which we were not able to come up with effective ModSecurity rules. This limitation is not due to a lack of rule coverage, but rather because these vulnerabilities do not rely on detectable malicious patterns in HTTP requests and therefore fall outside the primary detection capabilities of a web application firewall.
+
+\noindent For example, Cross Site Request Forgery attacks exploit the trust relationship between a user’s browser and a web application. Since CSRF requests are sent by the victim’s browser and include valid session cookies, they appear indistinguishable from legitimate requests. As a result, ModSecurity cannot identify CSRF attacks based solely on request inspection.
+
+\noindent Similarly, Cryptographic vulnerabilities such as the use of weak hashing algorithms, insecure random number generation, or improper key management are internal implementation flaws. These issues are not considered to be abnormal network traffic and therefore cannot be detected or prevented by ModSecurity rules.
+
+\noindent In summary, while ModSecurity is a powerful tool for detecting and mitigating many types of web application attacks, certain vulnerabilities that rely on application logic, user context, or internal implementation details are beyond its scope. Effective defense against these issues requires secure coding practices, proper application design, and additional security mechanisms implemented within the application itself.
 \end{document}

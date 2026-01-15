@@ -79,21 +79,18 @@ SELECT first\_name, last\_name FROM users WHERE user\_id = '1';. However, the in
 1' UNION SELECT column\_name, NULL FROM information\_schema.columns WHERE table\_name = 'users'\#, which allows an attacker to enumerate the column names of the users table.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/sqli_low_res1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqli_low_res1.png} 
 \end{figure}
 
 \noindent Looking at the returned results, we notice that there are password and user column. In order to view them, we will continue to use UNION attack: "1' UNION SELECT user, password from users\#"
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/sqli_low_res2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqli_low_res2.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent The proper fix for SQL injection is to stop concatenating user input into SQL queries and use prepared statements.
+\noindent \textbf{Patching:}The proper fix for SQL injection is to stop concatenating user input into SQL queries and use prepared statements.
 
 \noindent A prepared statement, (not to be confused with parameterized query) is a feature where the database pre-compiles SQL code and stores the results, separating it from data. Benefits of prepared statements are:[1]
-
-\noindent Benefits of prepared statements are efficiency, because they can be used repeatedly without re-compiling, and security, by reducing or eliminating SQL injection attacks.
 
 \noindent For MySQL (mysqli), the key changes are:
 \begin{lstlisting}
@@ -173,11 +170,10 @@ mysqli_close($GLOBALS["___mysqli_ston"]);
 \noindent Even though the id input in the frontend has been changed to checkbox, this can be bypassed by using Burp Suite to intercept the request to modify the input parameter id and send the request. In conclusion, our final query would be the same as one for the previous level which just needs to remove the first ' to become "1 UNION SELECT user, password from users\#"
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/sqli_med_res.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqli_med_res.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent Since the program logic remains unchanged, we can apply the same patching method as in the low level: prepared statements. This ensures that user input is never directly concatenated into SQL queries, effectively mitigating SQL injection vulnerabilities.
+\noindent \textbf{Patching:} Since the program logic remains unchanged, we can apply the same patching method as in the low level: prepared statements. This ensures that user input is never directly concatenated into SQL queries, effectively mitigating SQL injection vulnerabilities.
 
 \subsection{High level}
 \begin{lstlisting}   
@@ -241,8 +237,7 @@ if( isset( $_SESSION [ 'id' ] ) ) {
 \noindent Although the ID is obtained from the session rather than directly from user input, the SQL query is still vulnerable. The session value is inserted into the query without proper sanitization and is enclosed in quotes, similar to the low level implementation. Because the application allows users to modify their ID, an attacker can manipulate the session value and indirectly influence the SQL query. As a result, SQL injection remains possible, and the same attack technique used in the low level can still be applied.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/sqli_res_high.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqli_res_high.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent For the high level, we still reuse the same patching strategy as previous levels: prepared statements. Even if the ID comes from \$\_SESSION, it should be treated as untrusted because attackers may influence session state through application logic.
+\noindent \textbf{Patching:} For the high level, we still reuse the same patching strategy as previous levels: prepared statements. Even if the ID comes from \$\_SESSION, it should be treated as untrusted because attackers may influence session state through application logic.

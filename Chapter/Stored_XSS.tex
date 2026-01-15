@@ -35,21 +35,20 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
 \noindent After sanitization, the application constructs an INSERT query and stores the submitted name and comment into the guestbook table. The stored entries are later retrieved from the database and displayed back on the web page for all users to view.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss3_eg.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss3_eg.png} 
 \end{figure}
 
 \noindent Here, despite all above input sanitization mechanisms, the application is only protected against SQL injection but not from any possible XSS attacks. Because user input is saved in the database and later rendered on the web page without proper output encoding, any malicious script submitted by an attacker is safely stored in the database as plain text and subsequently executed by the browser whenever an user accesses the page. To demonstrate, we will try a simple payload with "a" on name field and "<script>alert(1)</script>" on message field. After logging out and accessing the page again, the injected script executed successfully, confirming the presence of a stored XSS vulnerability.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss3_res1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss3_res1.png} 
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss3_res2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss3_res2.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent To mitigate Stored XSS in this level, we need to encode data on output which means non-whitelisted values should be converted into HTML entities such as:
+\noindent \textbf{Patching:} To mitigate Stored XSS in this level, we need to encode data on output which means non-whitelisted values should be converted into HTML entities such as:
 \begin{lstlisting}
   < converts to: &lt;
   > converts to: &gt;
@@ -97,21 +96,20 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
 \noindent To demonstrate this, an XSS payload such as <img src=x onerror=alert(1)> was submitted in the name field with a benign message “hi”. Initially, the name input field only accepts up to 10 characters, which prevents direct submission of the payload. However, by using browser developer tools to modify the input field’s length attribute to allow up to 50 characters, the payload can be successfully injected and executed.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/length.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/length.png} 
 \end{figure}
 
 \noindent Next, we will also exit and then sign in to see whether the script executes.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss2_res_med.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss2_res_med.png} 
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss_res_med2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss_res_med2.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent We use the same method as in the low level output encoding using htmlspecialchars(). However, at this level the message field is already encoded in the provided code, we only need to apply encoding to the name field before storing and displaying it.
+\noindent \textbf{Patching:} We use the same method as in the low level output encoding using htmlspecialchars(). However, at this level the message field is already encoded in the provided code, we only need to apply encoding to the name field before storing and displaying it.
 \begin{lstlisting}
 $name = htmlspecialchars($name);
 \end{lstlisting}
@@ -147,8 +145,7 @@ if( isset( $_POST[ 'btnSign' ] ) ) {
 
 \noindent As you can see, other HTML tags and JavaScript execution vectors, such as event handlers or non-script tags, are not filtered making the name field still vulnerable. Hence, we will try the same payload as the previous level <img src=x onerror=alert(1);> and we also need to change max length of name field to 50.
 
-\noindent \textbf{Patching:}
-\noindent For the high level, we will reuse the same method as previous levels: output encoding using htmlspecialchars(). Since the message field is already sanitized, we will only apply encoding to the name field.
+\noindent \textbf{Patching:} For the high level, we will reuse the same method as previous levels: output encoding using htmlspecialchars(). Since the message field is already sanitized, we will only apply encoding to the name field.
 \begin{lstlisting}
 $name = htmlspecialchars($name);
 \end{lstlisting}

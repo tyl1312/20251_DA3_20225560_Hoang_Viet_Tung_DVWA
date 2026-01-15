@@ -1,5 +1,9 @@
 \subsection{Overview}
 
+\noindent JavaScript attacks take advantage of weaknesses in code that runs in the user's browser. Many web applications perform important checks or security validation using JavaScript. However, client-side code should never be trusted, because the user has full control over their browser. Anyone can view the JavaScript source, change values, bypass checks, or stop the script from running completely.
+
+\noindent As a result, any security feature implemented purely in JavaScript is insecure and can be bypassed with basic tools. Proper security requires performing all important validation and checking on the server side, where users cannot interfere with the code.
+
 \noindent \textbf{Objective:} Submit the phrase "success"
 
 \newpage
@@ -8,7 +12,7 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/js_low1.png}
+  \includegraphics[width=0.85\linewidth]{Figure/js_low1.png}
 \end{figure}
 
 \noindent After trying to submit the phrase "success", we get a "Invalid token message"
@@ -40,33 +44,35 @@ EOF;
 ?>
 \end{verbatim}
 
-\noindent Therefore, we take a look at the code and notice the generate\_token() function that takes the value of the input element with id "phrase" and applies a ROT13 transformation followed by an MD5 hash. The ROT13 function simply shifts each letter by 13 positions, while MD5 converts the resulting string into a fixed-length hash.
+\noindent Take a first look at the code, we notice a very complicated function. Basically, this function takes an input string and converts it into a fixed-length MD5 hash. Next, we observe the generate\_token() function that takes the value of the input element with id "phrase" and applies a ROT13 transformation followed by an MD5 hash. The ROT13 function simply shifts each letter by 13 positions, while MD5 converts the resulting string into a fixed-length hash.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/js_low.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/js_low.png} 
 \end{figure}
 \noindent As a result, we assume that the token value is actually output of phrase "ChangeMe" after being hashed. In order to test the assumption, we use a online tool named Cyberchef to hash the phrase "ChangeMe"
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/js_low2.png}
+  \includegraphics[width=0.85\linewidth]{Figure/js_low2.png}
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/js_low6.png}
+  \includegraphics[width=0.85\linewidth]{Figure/js_low6.png}
 \end{figure}
 \newpage
 \noindent As expected, the output is identical to the token value. So, in order to successfully submit the phrase "success", we need to change the token value to the hashed value of success which will be computed with CyberChef.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/js_low3.png}
+  \includegraphics[width=0.85\linewidth]{Figure/js_low3.png}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/js_low4.png}
+  \includegraphics[width=0.85\linewidth]{Figure/js_low4.png}
 \end{figure}
+
+\noindent \textbf{Patching:} Although the hashing method is weak and insecure, the main issure lies in the client-side token generation. An attacker can easily reverse-engineer the JavaScript code to understand how the token is generated and create valid tokens for any phrase. To fix this, the token generation logic should be moved to the server side. The server should generate a secure token based on the phrase and send it to the client for verification upon submission. This way, even if an attacker inspects the client-side code, they cannot generate valid tokens without knowing the server-side logic.
 
 \newpage
 \subsection{Medium level}
@@ -77,13 +83,25 @@ $page[ 'body' ] .= '<script src="' . DVWA_WEB_PAGE_TO_ROOT . 'vulnerabilities/ja
 \end{lstlisting}
 \noindent The medium level is excuting a Javascript file called medium.js. 
 \begin{lstlisting}
-function do_something(e){for(var t="",n=e.length-1;n>=0;n--)t+=e[n];return t}setTimeout(function(){do_elsesomething("XX")},300);function do_elsesomething(e){document.getElementById("token").value=do_something(e+document.getElementById("phrase").value+"XX")}
+function do_something(e){
+  for(var t="",n=e.length-1;n>=0;n--){
+    t+=e[n];
+  }
+  return t
+}
+
+setTimeout(function(){do_elsesomething("XX")},300);
+
+function do_elsesomething(e){
+  document.getElementById("token").value=do_something(e+document.getElementById("phrase").value+"XX")
+}
 \end{lstlisting}
 \noindent The function do\_something(e) returns the reversed version of the input. After a short delay of 300 milliseconds, do\_elsesomething("XX") is executed using setTimeout(). The do\_elsesomething("XX") function constructs a new string by concatenating a fixed prefix ("XX"), the value of the input field with id "phrase", and another "XX" suffix. This combined string is then passed to do\_something(), which reverses it, and the final result is stored in the input field with id "token". 
 
 \noindent Moreover, looking at the token for phrase "ChangeMe", we notice that the token is being generated in the exact way as above. Therefore, in order to submit phrase "success", we will try with token "XXsseccusXX"
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/js_med3.png}
+  \includegraphics[width=0.85\linewidth]{Figure/js_med3.png}
 \end{figure}
+\noindent \textbf{Patching:} Similar to the low level, the main issue here is that the token generation is done on the client side. An attacker can easily analyze the JavaScript code to understand how the token is created and generate valid tokens for any phrase. To fix this vulnerability, we can simply move the token generation logic to the server side. This will prevent attackers from being able to generate valid tokens without knowing the server-side logic, even if they inspect the client-side code.
 \subsection{High level}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.12.16)  8 JAN 2026 22:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.12.16)  15 JAN 2026 16:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1273,11 +1273,11 @@ Package hyperref Info: Link coloring OFF on input line 2.
 [1
 
 {C:/Users/DELL/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{D:/tung/App/MiKTeX/fonts/enc/dvips/vntex/t5.enc}]
-<Figure/brute1.png, id=362, 941.76843pt x 172.39406pt>
+<Figure/brute1.png, id=346, 941.76843pt x 172.39406pt>
 File: Figure/brute1.png Graphic file (type png)
 <use Figure/brute1.png>
 Package pdftex.def Info: Figure/brute1.png  used on input line 12.
-(pdftex.def)             Requested size: 426.79135pt x 78.12637pt.
+(pdftex.def)             Requested size: 362.77525pt x 66.40742pt.
 LaTeX Font Info:    Trying to load font information for T5+pcr on input line 15.
  (D:\tung\App\MiKTeX\tex/latex/vntex\t5pcr.fd
 File: t5ucr.fd 2005/08/24 Fontinst v1.929 font definitions for T5/pcr.
@@ -1288,15 +1288,15 @@ Overfull \hbox (16.1575pt too wide) in paragraph at lines 47--48
 \T5/ptm/m/n/13 This code rep-re-sents a web-site lo-gin pro-cess. The con-di-tion if (is-set($_GET['Login']))
  []
 
-<Figure/brute10.png, id=395, 560.0925pt x 211.54031pt>
+<Figure/brute10.png, id=380, 560.0925pt x 211.54031pt>
 File: Figure/brute10.png Graphic file (type png)
 <use Figure/brute10.png>
 Package pdftex.def Info: Figure/brute10.png  used on input line 53.
-(pdftex.def)             Requested size: 298.75264pt x 112.83885pt.
+(pdftex.def)             Requested size: 362.77525pt x 137.02184pt.
 
 
 [3 <./Figure/brute10.png>]
-<Figure/brute3.png, id=409, 1352.05125pt x 265.74281pt>
+<Figure/brute3.png, id=393, 1352.05125pt x 265.74281pt>
 File: Figure/brute3.png Graphic file (type png)
 <use Figure/brute3.png>
 Package pdftex.def Info: Figure/brute3.png  used on input line 60.
@@ -1316,29 +1316,29 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 [6]
-<Figure/brute_high1.png, id=469, 645.16031pt x 603.75563pt>
+<Figure/brute_high1.png, id=453, 645.16031pt x 603.75563pt>
 File: Figure/brute_high1.png Graphic file (type png)
 <use Figure/brute_high1.png>
-Package pdftex.def Info: Figure/brute_high1.png  used on input line 129.
-(pdftex.def)             Requested size: 298.75264pt x 279.57347pt.
-<Figure/brute_high2.png, id=470, 422.32782pt x 207.02344pt>
+Package pdftex.def Info: Figure/brute_high1.png  used on input line 131.
+(pdftex.def)             Requested size: 362.77525pt x 339.49194pt.
+<Figure/brute_high2.png, id=454, 422.32782pt x 207.02344pt>
 File: Figure/brute_high2.png Graphic file (type png)
 <use Figure/brute_high2.png>
-Package pdftex.def Info: Figure/brute_high2.png  used on input line 134.
-(pdftex.def)             Requested size: 298.75264pt x 146.45064pt.
+Package pdftex.def Info: Figure/brute_high2.png  used on input line 136.
+(pdftex.def)             Requested size: 362.77525pt x 177.8345pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 [7 <./Figure/brute_high1.png>]
-<Figure/brute_high3.png, id=478, 1357.32094pt x 286.82156pt>
+<Figure/brute_high3.png, id=462, 1357.32094pt x 286.82156pt>
 File: Figure/brute_high3.png Graphic file (type png)
 <use Figure/brute_high3.png>
-Package pdftex.def Info: Figure/brute_high3.png  used on input line 140.
+Package pdftex.def Info: Figure/brute_high3.png  used on input line 142.
 (pdftex.def)             Requested size: 692.07956pt x 146.24493pt.
 
-Overfull \hbox (265.28821pt too wide) in paragraph at lines 140--141
+Overfull \hbox (265.28821pt too wide) in paragraph at lines 142--143
  [][] 
  []
 
@@ -1355,11 +1355,11 @@ Underfull \vbox (badness 1859) has occurred while \output is active []
 
 
 [9]
-<Figure/com_res_low.png, id=511, 612.03656pt x 262.73157pt>
+<Figure/com_res_low.png, id=495, 612.03656pt x 262.73157pt>
 File: Figure/com_res_low.png Graphic file (type png)
 <use Figure/com_res_low.png>
 Package pdftex.def Info: Figure/com_res_low.png  used on input line 62.
-(pdftex.def)             Requested size: 298.75264pt x 128.24648pt.
+(pdftex.def)             Requested size: 362.77525pt x 155.72787pt.
 
 Underfull \vbox (badness 1424) has occurred while \output is active []
 
@@ -1368,27 +1368,27 @@ Underfull \vbox (badness 1424) has occurred while \output is active []
 [10]
 
 [11 <./Figure/com_res_low.png>]
-<Figure/command_med2.png, id=547, 614.295pt x 79.04532pt>
+<Figure/command_med2.png, id=531, 614.295pt x 79.04532pt>
 File: Figure/command_med2.png Graphic file (type png)
 <use Figure/command_med2.png>
 Package pdftex.def Info: Figure/command_med2.png  used on input line 102.
-(pdftex.def)             Requested size: 298.75264pt x 38.44305pt.
+(pdftex.def)             Requested size: 362.77525pt x 46.68094pt.
 
 
 [12]
-<Figure/com_res_med.png, id=581, 612.78937pt x 135.50626pt>
+<Figure/com_res_med.png, id=565, 612.78937pt x 135.50626pt>
 File: Figure/com_res_med.png Graphic file (type png)
 <use Figure/com_res_med.png>
 Package pdftex.def Info: Figure/com_res_med.png  used on input line 108.
-(pdftex.def)             Requested size: 298.75264pt x 66.06367pt.
+(pdftex.def)             Requested size: 362.77525pt x 80.22092pt.
 
 
 [13 <./Figure/command_med2.png> <./Figure/com_res_med.png>]
-<Figure/com_res_high.png, id=591, 612.78937pt x 134.75343pt>
+<Figure/com_res_high.png, id=575, 612.78937pt x 134.75343pt>
 File: Figure/com_res_high.png Graphic file (type png)
 <use Figure/com_res_high.png>
-Package pdftex.def Info: Figure/com_res_high.png  used on input line 156.
-(pdftex.def)             Requested size: 298.75264pt x 65.69666pt.
+Package pdftex.def Info: Figure/com_res_high.png  used on input line 155.
+(pdftex.def)             Requested size: 362.77525pt x 79.77524pt.
 
 
 [14])
@@ -1402,16 +1402,16 @@ Package pdftex.def Info: Figure/com_res_high.png  used on input line 156.
 [18]
 
 [19]
-<Figure/csrf_invalid.png, id=713, 544.28343pt x 213.79875pt>
+<Figure/csrf_invalid.png, id=700, 544.28343pt x 213.79875pt>
 File: Figure/csrf_invalid.png Graphic file (type png)
 <use Figure/csrf_invalid.png>
-Package pdftex.def Info: Figure/csrf_invalid.png  used on input line 89.
-(pdftex.def)             Requested size: 298.75264pt x 117.35152pt.
-<Figure/csrf_valid.png, id=714, 543.53062pt x 251.43938pt>
+Package pdftex.def Info: Figure/csrf_invalid.png  used on input line 101.
+(pdftex.def)             Requested size: 362.77525pt x 142.5006pt.
+<Figure/csrf_valid.png, id=701, 543.53062pt x 251.43938pt>
 File: Figure/csrf_valid.png Graphic file (type png)
 <use Figure/csrf_valid.png>
-Package pdftex.def Info: Figure/csrf_valid.png  used on input line 93.
-(pdftex.def)             Requested size: 298.75264pt x 138.2115pt.
+Package pdftex.def Info: Figure/csrf_valid.png  used on input line 105.
+(pdftex.def)             Requested size: 362.77525pt x 167.82661pt.
 
 
 [20 <./Figure/csrf_invalid.png> <./Figure/csrf_valid.png>]
@@ -1419,21 +1419,23 @@ Package pdftex.def Info: Figure/csrf_valid.png  used on input line 93.
 [21]
 
 [22]
-<Figure/csrf_high3.png, id=808, 570.63188pt x 207.77625pt>
+
+[23]
+<Figure/csrf_high3.png, id=799, 570.63188pt x 207.77625pt>
 File: Figure/csrf_high3.png Graphic file (type png)
 <use Figure/csrf_high3.png>
-Package pdftex.def Info: Figure/csrf_high3.png  used on input line 181.
-(pdftex.def)             Requested size: 298.75264pt x 108.77979pt.
+Package pdftex.def Info: Figure/csrf_high3.png  used on input line 195.
+(pdftex.def)             Requested size: 362.77525pt x 132.09178pt.
 )
 
-[23 <./Figure/csrf_high3.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\File_inclusion.tex
+[24 <./Figure/csrf_high3.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\File_inclusion.tex
 
-[24]
-<Figure/fi_res_low.png, id=819, 798.73407pt x 110.66344pt>
+[25]
+<Figure/fi_res_low.png, id=811, 798.73407pt x 110.66344pt>
 File: Figure/fi_res_low.png Graphic file (type png)
 <use Figure/fi_res_low.png>
 Package pdftex.def Info: Figure/fi_res_low.png  used on input line 27.
-(pdftex.def)             Requested size: 298.75264pt x 41.39229pt.
+(pdftex.def)             Requested size: 362.77525pt x 50.26244pt.
 
 Overfull \hbox (0.24553pt too wide) in paragraph at lines 24--28
 \T5/ptm/m/n/13 done us-ing ../ to move one di-rec-tory up. So, start-ing from /DVWA/vulnerabilities/fi,
@@ -1441,157 +1443,206 @@ Overfull \hbox (0.24553pt too wide) in paragraph at lines 24--28
 
 
 
-[25 <./Figure/fi_res_low.png>]
+[26 <./Figure/fi_res_low.png>]
 
-[26]
-<Figure/fi_res_med.png, id=857, 818.30719pt x 107.65219pt>
+[27]
+<Figure/fi_res_med.png, id=848, 818.30719pt x 107.65219pt>
 File: Figure/fi_res_med.png Graphic file (type png)
 <use Figure/fi_res_med.png>
-Package pdftex.def Info: Figure/fi_res_med.png  used on input line 71.
-(pdftex.def)             Requested size: 298.75264pt x 39.30339pt.
+Package pdftex.def Info: Figure/fi_res_med.png  used on input line 70.
+(pdftex.def)             Requested size: 362.77525pt x 47.72519pt.
 
 
-[27 <./Figure/fi_res_med.png>]
-<Figure/fi_res_high.png, id=875, 855.195pt x 143.03438pt>
+[28 <./Figure/fi_res_med.png>]
+<Figure/fi_res_high.png, id=866, 855.195pt x 143.03438pt>
 File: Figure/fi_res_high.png Graphic file (type png)
 <use Figure/fi_res_high.png>
-Package pdftex.def Info: Figure/fi_res_high.png  used on input line 97.
-(pdftex.def)             Requested size: 298.75264pt x 49.96674pt.
+Package pdftex.def Info: Figure/fi_res_high.png  used on input line 95.
+(pdftex.def)             Requested size: 362.77525pt x 60.67421pt.
 
-Overfull \hbox (31.47148pt too wide) in paragraph at lines 94--98
+Overfull \hbox (31.47148pt too wide) in paragraph at lines 92--96
 \T5/ptm/m/n/13 files on the server. For ex-am-ple, us-ing file:///var/www/html/DVWA/hackable/flags/fi.php
  []
 
 )
 
-[28 <./Figure/fi_res_high.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\File_upload.tex
+[29 <./Figure/fi_res_high.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\File_upload.tex
 
-[29]
-<Figure/fu_res.png, id=900, 614.295pt x 137.7647pt>
+[30]
+<Figure/fu_res.png, id=891, 614.295pt x 137.7647pt>
 File: Figure/fu_res.png Graphic file (type png)
 <use Figure/fu_res.png>
 Package pdftex.def Info: Figure/fu_res.png  used on input line 31.
-(pdftex.def)             Requested size: 426.79135pt x 95.71568pt.
-<Figure/fu_res_low.png, id=901, 1160.08406pt x 109.91063pt>
+(pdftex.def)             Requested size: 362.77525pt x 81.35823pt.
+<Figure/fu_res_low.png, id=892, 1160.08406pt x 109.91063pt>
 File: Figure/fu_res_low.png Graphic file (type png)
 <use Figure/fu_res_low.png>
 Package pdftex.def Info: Figure/fu_res_low.png  used on input line 37.
-(pdftex.def)             Requested size: 426.79135pt x 40.43484pt.
+(pdftex.def)             Requested size: 362.77525pt x 34.37045pt.
 
 
-[30 <./Figure/fu_res.png>]
-Overfull \hbox (3.66367pt too wide) in paragraph at lines 40--42
-\T5/ptm/m/n/13 strict server-side checks and safe stor-age: ver-ify MIME type us-ing [][]\T5/pcr/m/n/13 finfo_file()
- []
+[31 <./Figure/fu_res.png>]
 
-
-
-[31 <./Figure/fu_res_low.png>]
-
-[32]
+[32 <./Figure/fu_res_low.png>]
 
 [33]
-<Figure/fu_res_med.png, id=1003, 501.37312pt x 66.2475pt>
+
+[34]
+
+[35]
+<Figure/fu_res_med.png, id=1024, 501.37312pt x 66.2475pt>
 File: Figure/fu_res_med.png Graphic file (type png)
 <use Figure/fu_res_med.png>
-Package pdftex.def Info: Figure/fu_res_med.png  used on input line 116.
-(pdftex.def)             Requested size: 426.79135pt x 56.39554pt.
+Package pdftex.def Info: Figure/fu_res_med.png  used on input line 141.
+(pdftex.def)             Requested size: 362.77525pt x 47.9367pt.
 
-Overfull \hbox (20.26553pt too wide) in paragraph at lines 118--119
+Overfull \hbox (20.26553pt too wide) in paragraph at lines 143--144
 \T5/ptm/m/n/13 Content-Type of the file is nei-ther "im-age/png" nor "im-age/jpeg" but "application/octet-
  []
 
-)
 
-[34 <./Figure/fu_res_med.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Insecure_Captcha.tex
+
+[36 <./Figure/fu_res_med.png>]
+
+[37]
+<Figure/fu_high1.png, id=1069, 613.54219pt x 138.5175pt>
+File: Figure/fu_high1.png Graphic file (type png)
+<use Figure/fu_high1.png>
+Package pdftex.def Info: Figure/fu_high1.png  used on input line 192.
+(pdftex.def)             Requested size: 362.77525pt x 81.90215pt.
+<Figure/fu_high2.png, id=1070, 612.78937pt x 137.01187pt>
+File: Figure/fu_high2.png Graphic file (type png)
+<use Figure/fu_high2.png>
+Package pdftex.def Info: Figure/fu_high2.png  used on input line 197.
+(pdftex.def)             Requested size: 362.77525pt x 81.11226pt.
+<Figure/fu_high3.png, id=1071, 557.83406pt x 441.90094pt>
+File: Figure/fu_high3.png Graphic file (type png)
+<use Figure/fu_high3.png>
+Package pdftex.def Info: Figure/fu_high3.png  used on input line 203.
+(pdftex.def)             Requested size: 362.77525pt x 287.38728pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[38 <./Figure/fu_high1.png> <./Figure/fu_high2.png>]
+<Figure/fu_high4.png, id=1082, 332.74312pt x 27.85406pt>
+File: Figure/fu_high4.png Graphic file (type png)
+<use Figure/fu_high4.png>
+Package pdftex.def Info: Figure/fu_high4.png  used on input line 208.
+(pdftex.def)             Requested size: 362.77525pt x 30.37007pt.
+<Figure/fu_high5.png, id=1083, 567.62062pt x 391.4625pt>
+File: Figure/fu_high5.png Graphic file (type png)
+<use Figure/fu_high5.png>
+Package pdftex.def Info: Figure/fu_high5.png  used on input line 213.
+(pdftex.def)             Requested size: 362.77525pt x 250.20064pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[39 <./Figure/fu_high3.png> <./Figure/fu_high4.png>])
+
+[40 <./Figure/fu_high5.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Insecure_Captcha.tex
+Overfull \hbox (8.94258pt too wide) in paragraph at lines 2--3
+\T5/ptm/m/n/13 torted text as well as hu-mans can, so bots can-not nav-i-gate sites pro-tected by Captchas. 
+ []
+
+
 Overfull \hbox (13.49258pt too wide) in paragraph at lines 4--5
 \T5/ptm/m/n/13 Such func-tion-al-ity typ-i-cally in-cludes user reg-is-tra-tion and changes, pass-word changes,
  []
 
 
 
-[35]
-
-[36]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[37]
-Overfull \hbox (9.98257pt too wide) in paragraph at lines 88--89
-\T5/ptm/m/n/13 The code im-ple-ments a two-step pass-word change pro-cess pro-tected by a CAPTCHA.
- []
-
-<Figure/cap_low1.png, id=1085, 557.08125pt x 306.39468pt>
-File: Figure/cap_low1.png Graphic file (type png)
-<use Figure/cap_low1.png>
-Package pdftex.def Info: Figure/cap_low1.png  used on input line 95.
-(pdftex.def)             Requested size: 426.79135pt x 234.7418pt.
-<Figure/cap_low2.png, id=1086, 560.0925pt x 219.06844pt>
-File: Figure/cap_low2.png Graphic file (type png)
-<use Figure/cap_low2.png>
-Package pdftex.def Info: Figure/cap_low2.png  used on input line 99.
-(pdftex.def)             Requested size: 426.79135pt x 166.93831pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[38]
-
-[39 <./Figure/cap_low1.png> <./Figure/cap_low2.png>]
-
-[40]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
 [41]
-<Figure/cap_med1.png, id=1186, 550.30594pt x 304.13625pt>
-File: Figure/cap_med1.png Graphic file (type png)
-<use Figure/cap_med1.png>
-Package pdftex.def Info: Figure/cap_med1.png  used on input line 194.
-(pdftex.def)             Requested size: 298.75264pt x 165.11751pt.
-<Figure/cap_med2.png, id=1187, 569.87906pt x 188.20313pt>
-File: Figure/cap_med2.png Graphic file (type png)
-<use Figure/cap_med2.png>
-Package pdftex.def Info: Figure/cap_med2.png  used on input line 198.
-(pdftex.def)             Requested size: 298.75264pt x 98.66165pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 
 [42]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[43 <./Figure/cap_med1.png> <./Figure/cap_med2.png>]
+
+
+[43]
+<Figure/cap_low1.png, id=1173, 557.08125pt x 306.39468pt>
+File: Figure/cap_low1.png Graphic file (type png)
+<use Figure/cap_low1.png>
+Package pdftex.def Info: Figure/cap_low1.png  used on input line 94.
+(pdftex.def)             Requested size: 362.77525pt x 199.5282pt.
+<Figure/cap_low2.png, id=1174, 560.0925pt x 219.06844pt>
+File: Figure/cap_low2.png Graphic file (type png)
+<use Figure/cap_low2.png>
+Package pdftex.def Info: Figure/cap_low2.png  used on input line 98.
+(pdftex.def)             Requested size: 362.77525pt x 141.89806pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 
 [44]
-<Figure/captcha4.png, id=1256, 496.85625pt x 53.44969pt>
-File: Figure/captcha4.png Graphic file (type png)
-<use Figure/captcha4.png>
-Package pdftex.def Info: Figure/captcha4.png  used on input line 264.
-(pdftex.def)             Requested size: 298.75264pt x 32.13855pt.
-<Figure/cap_high1.png, id=1257, 560.0925pt x 290.58563pt>
-File: Figure/cap_high1.png Graphic file (type png)
-<use Figure/cap_high1.png>
-Package pdftex.def Info: Figure/cap_high1.png  used on input line 270.
-(pdftex.def)             Requested size: 298.75264pt x 155.00285pt.
+Overfull \hbox (3.93759pt too wide) in paragraph at lines 100--103
+\T5/ptm/m/n/13 Here, in the photo, it is clear that we haven't done the Captcha since the g-reCaptcha-
+ []
 
 
-[45 <./Figure/captcha4.png>]
-<Figure/cap_high2.png, id=1288, 561.59813pt x 191.9672pt>
-File: Figure/cap_high2.png Graphic file (type png)
-<use Figure/cap_high2.png>
-Package pdftex.def Info: Figure/cap_high2.png  used on input line 274.
-(pdftex.def)             Requested size: 298.75264pt x 102.11998pt.
-)
 
-[46 <./Figure/cap_high1.png> <./Figure/cap_high2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\SQL_injection.tex
+[45 <./Figure/cap_low1.png> <./Figure/cap_low2.png>]
+
+[46]
 
 [47]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 
 [48]
+<Figure/cap_med1.png, id=1288, 550.30594pt x 304.13625pt>
+File: Figure/cap_med1.png Graphic file (type png)
+<use Figure/cap_med1.png>
+Package pdftex.def Info: Figure/cap_med1.png  used on input line 205.
+(pdftex.def)             Requested size: 362.77525pt x 200.4985pt.
+<Figure/cap_med2.png, id=1289, 569.87906pt x 188.20313pt>
+File: Figure/cap_med2.png Graphic file (type png)
+<use Figure/cap_med2.png>
+Package pdftex.def Info: Figure/cap_med2.png  used on input line 209.
+(pdftex.def)             Requested size: 362.77525pt x 119.8063pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[49]
+
+[50 <./Figure/cap_med1.png> <./Figure/cap_med2.png>]
+
+[51]
+<Figure/Captcha4.png, id=1358, 496.85625pt x 53.44969pt>
+File: Figure/Captcha4.png Graphic file (type png)
+<use Figure/Captcha4.png>
+Package pdftex.def Info: Figure/Captcha4.png  used on input line 277.
+(pdftex.def)             Requested size: 362.77525pt x 39.02608pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[52]
+<Figure/cap_high1.png, id=1387, 560.0925pt x 290.58563pt>
+File: Figure/cap_high1.png Graphic file (type png)
+<use Figure/cap_high1.png>
+Package pdftex.def Info: Figure/cap_high1.png  used on input line 283.
+(pdftex.def)             Requested size: 362.77525pt x 188.22218pt.
+<Figure/cap_high2.png, id=1388, 561.59813pt x 191.9672pt>
+File: Figure/cap_high2.png Graphic file (type png)
+<use Figure/cap_high2.png>
+Package pdftex.def Info: Figure/cap_high2.png  used on input line 287.
+(pdftex.def)             Requested size: 362.77525pt x 124.00389pt.
+)
+
+[53 <./Figure/Captcha4.png> <./Figure/cap_high1.png> <./Figure/cap_high2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\SQL_injection.tex
+
+[54]
+
+[55]
 Overfull \hbox (1.1808pt too wide) in paragraph at lines 65--66
 \T5/ptm/m/n/13 This code im-ple-ments a user lookup fea-ture based on an ID value sub-mit-ted through
  []
@@ -1601,77 +1652,88 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[49]
-<Figure/sqli_low_res1.png, id=1366, 683.55376pt x 650.43pt>
+[56]
+<Figure/sqli_low_res1.png, id=1468, 683.55376pt x 650.43pt>
 File: Figure/sqli_low_res1.png Graphic file (type png)
 <use Figure/sqli_low_res1.png>
 Package pdftex.def Info: Figure/sqli_low_res1.png  used on input line 82.
-(pdftex.def)             Requested size: 298.75264pt x 284.2746pt.
-<Figure/sqli_low_res2.png, id=1367, 613.54219pt x 351.56343pt>
+(pdftex.def)             Requested size: 362.77525pt x 345.20264pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[57]
+<Figure/sqli_low_res2.png, id=1473, 613.54219pt x 351.56343pt>
 File: Figure/sqli_low_res2.png Graphic file (type png)
 <use Figure/sqli_low_res2.png>
 Package pdftex.def Info: Figure/sqli_low_res2.png  used on input line 88.
-(pdftex.def)             Requested size: 298.75264pt x 171.18933pt.
+(pdftex.def)             Requested size: 362.77525pt x 207.87123pt.
 
+
+[58 <./Figure/sqli_low_res1.png> <./Figure/sqli_low_res2.png>]
+
+[59]
+
+[60]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[50 <./Figure/sqli_low_res1.png>]
-
-[51 <./Figure/sqli_low_res2.png>]
-
-[52]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[53]
-<Figure/sqli_med_res.png, id=1448, 612.78937pt x 391.4625pt>
+[61]
+<Figure/sqli_med_res.png, id=1559, 612.78937pt x 391.4625pt>
 File: Figure/sqli_med_res.png Graphic file (type png)
 <use Figure/sqli_med_res.png>
-Package pdftex.def Info: Figure/sqli_med_res.png  used on input line 161.
-(pdftex.def)             Requested size: 298.75264pt x 190.85063pt.
+Package pdftex.def Info: Figure/sqli_med_res.png  used on input line 173.
+(pdftex.def)             Requested size: 362.77525pt x 231.74933pt.
+
+Underfull \vbox (badness 2277) has occurred while \output is active []
 
 
-[54 <./Figure/sqli_med_res.png>]
+
+[62 <./Figure/sqli_med_res.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[55]
-<Figure/sqli_res_high.png, id=1510, 611.28375pt x 371.13657pt>
+[63]
+<Figure/sqli_res_high.png, id=1614, 611.28375pt x 371.13657pt>
 File: Figure/sqli_res_high.png Graphic file (type png)
 <use Figure/sqli_res_high.png>
-Package pdftex.def Info: Figure/sqli_res_high.png  used on input line 226.
-(pdftex.def)             Requested size: 298.75264pt x 181.3828pt.
-)
+Package pdftex.def Info: Figure/sqli_res_high.png  used on input line 240.
+(pdftex.def)             Requested size: 362.77525pt x 220.25418pt.
 
-[56 <./Figure/sqli_res_high.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\SQL_blind_injection.tex
-
-[57]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[58]
-<Figure/sqlib1.png, id=1562, 355.3275pt x 88.83188pt>
+[64])
+
+[65 <./Figure/sqli_res_high.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\SQL_blind_injection.tex
+
+[66]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[67]
+<Figure/sqlib1.png, id=1677, 355.3275pt x 88.83188pt>
 File: Figure/sqlib1.png Graphic file (type png)
 <use Figure/sqlib1.png>
 Package pdftex.def Info: Figure/sqlib1.png  used on input line 77.
-(pdftex.def)             Requested size: 298.75264pt x 74.6901pt.
+(pdftex.def)             Requested size: 362.77525pt x 90.69676pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[59]
-<Figure/sqlib_length.png, id=1590, 617.30624pt x 91.84312pt>
+[68]
+<Figure/sqlib_length.png, id=1705, 617.30624pt x 91.84312pt>
 File: Figure/sqlib_length.png Graphic file (type png)
 <use Figure/sqlib_length.png>
 Package pdftex.def Info: Figure/sqlib_length.png  used on input line 83.
-(pdftex.def)             Requested size: 298.75264pt x 44.44995pt.
-<Figure/sqli_blind_res.png, id=1591, 1397.97281pt x 289.83281pt>
+(pdftex.def)             Requested size: 362.77525pt x 53.97534pt.
+<Figure/sqli_blind_res.png, id=1706, 1397.97281pt x 289.83281pt>
 File: Figure/sqli_blind_res.png Graphic file (type png)
 <use Figure/sqli_blind_res.png>
 Package pdftex.def Info: Figure/sqli_blind_res.png  used on input line 89.
@@ -1682,723 +1744,673 @@ Overfull \hbox (278.59274pt too wide) in paragraph at lines 89--90
  []
 
 
-
-[60 <./Figure/sqlib1.png> <./Figure/sqlib_length.png> <./Figure/sqli_blind_res.png>]
-
-[61]
-
-[62]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[63]
-<Figure/sqlib_med1.png, id=1670, 560.0925pt x 287.57437pt>
-File: Figure/sqlib_med1.png Graphic file (type png)
-<use Figure/sqlib_med1.png>
-Package pdftex.def Info: Figure/sqlib_med1.png  used on input line 161.
-(pdftex.def)             Requested size: 426.79135pt x 219.1424pt.
-<Figure/sqlib_med2.png, id=1671, 555.57562pt x 280.79906pt>
-File: Figure/sqlib_med2.png Graphic file (type png)
-<use Figure/sqlib_med2.png>
-Package pdftex.def Info: Figure/sqlib_med2.png  used on input line 165.
-(pdftex.def)             Requested size: 426.79135pt x 215.71034pt.
+[69 <./Figure/sqlib1.png> <./Figure/sqlib_length.png>]
 
-
-[64 <./Figure/sqlib_med1.png> <./Figure/sqlib_med2.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[65]
-<Figure/sqlib_high1.png, id=1724, 613.54219pt x 69.25874pt>
-File: Figure/sqlib_high1.png Graphic file (type png)
-<use Figure/sqlib_high1.png>
-Package pdftex.def Info: Figure/sqlib_high1.png  used on input line 241.
-(pdftex.def)             Requested size: 426.79135pt x 48.17747pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[66])
-
-[67 <./Figure/sqlib_high1.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Weak_sessionID.tex
-
-[68]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[69]
-File: Figure/sqlib1.png Graphic file (type png)
-<use Figure/sqlib1.png>
-Package pdftex.def Info: Figure/sqlib1.png  used on input line 77.
-(pdftex.def)             Requested size: 298.75264pt x 74.6901pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[70]
-File: Figure/sqlib_length.png Graphic file (type png)
-<use Figure/sqlib_length.png>
-Package pdftex.def Info: Figure/sqlib_length.png  used on input line 83.
-(pdftex.def)             Requested size: 298.75264pt x 44.44995pt.
-File: Figure/sqli_blind_res.png Graphic file (type png)
-<use Figure/sqli_blind_res.png>
-Package pdftex.def Info: Figure/sqli_blind_res.png  used on input line 89.
-(pdftex.def)             Requested size: 298.75264pt x 61.93692pt.
-
+[70 <./Figure/sqli_blind_res.png>]
 
 [71]
-
-[72]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[73]
+[72]
+<Figure/sqlib_med1.png, id=1788, 560.0925pt x 287.57437pt>
 File: Figure/sqlib_med1.png Graphic file (type png)
 <use Figure/sqlib_med1.png>
-Package pdftex.def Info: Figure/sqlib_med1.png  used on input line 161.
-(pdftex.def)             Requested size: 298.75264pt x 153.3966pt.
+Package pdftex.def Info: Figure/sqlib_med1.png  used on input line 170.
+(pdftex.def)             Requested size: 362.77525pt x 186.2717pt.
+<Figure/sqlib_med2.png, id=1789, 555.57562pt x 280.79906pt>
+File: Figure/sqlib_med2.png Graphic file (type png)
+<use Figure/sqlib_med2.png>
+Package pdftex.def Info: Figure/sqlib_med2.png  used on input line 174.
+(pdftex.def)             Requested size: 362.77525pt x 183.35701pt.
+
+
+[73 <./Figure/sqlib_med1.png> <./Figure/sqlib_med2.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 
 
 [74]
+<Figure/sqlib_high1.png, id=1842, 613.54219pt x 69.25874pt>
+File: Figure/sqlib_high1.png Graphic file (type png)
+<use Figure/sqlib_high1.png>
+Package pdftex.def Info: Figure/sqlib_high1.png  used on input line 252.
+(pdftex.def)             Requested size: 362.77525pt x 40.95107pt.
+
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[75]
-File: Figure/sqlib_high1.png Graphic file (type png)
-<use Figure/sqlib_high1.png>
-Package pdftex.def Info: Figure/sqlib_high1.png  used on input line 237.
-(pdftex.def)             Requested size: 298.75264pt x 33.72466pt.
-)
+[75])
 
-[76] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Stored_XSS.tex
+[76 <./Figure/sqlib_high1.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Weak_sessionID.tex
 
 [77]
 
 [78]
-<Figure/xss3_eg.png, id=2007, 295.85532pt x 36.88782pt>
+
+[79])
+
+[80] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Stored_XSS.tex
+
+[81]
+
+[82]
+<Figure/xss3_eg.png, id=1962, 295.85532pt x 36.88782pt>
 File: Figure/xss3_eg.png Graphic file (type png)
 <use Figure/xss3_eg.png>
 Package pdftex.def Info: Figure/xss3_eg.png  used on input line 38.
-(pdftex.def)             Requested size: 298.75264pt x 37.25018pt.
-<Figure/xss3_res1.png, id=2008, 1114.91531pt x 184.43906pt>
+(pdftex.def)             Requested size: 362.77525pt x 45.2327pt.
+<Figure/xss3_res1.png, id=1963, 1114.91531pt x 184.43906pt>
 File: Figure/xss3_res1.png Graphic file (type png)
 <use Figure/xss3_res1.png>
 Package pdftex.def Info: Figure/xss3_res1.png  used on input line 44.
-(pdftex.def)             Requested size: 298.75264pt x 49.42209pt.
-<Figure/xss3_res2.png, id=2009, 298.86656pt x 39.14626pt>
+(pdftex.def)             Requested size: 362.77525pt x 60.01233pt.
+<Figure/xss3_res2.png, id=1964, 298.86656pt x 39.14626pt>
 File: Figure/xss3_res2.png Graphic file (type png)
 <use Figure/xss3_res2.png>
 Package pdftex.def Info: Figure/xss3_res2.png  used on input line 48.
-(pdftex.def)             Requested size: 298.75264pt x 39.1342pt.
+(pdftex.def)             Requested size: 362.77525pt x 47.52061pt.
 
 
-[79 <./Figure/xss3_eg.png> <./Figure/xss3_res1.png> <./Figure/xss3_res2.png>]
+[83 <./Figure/xss3_eg.png> <./Figure/xss3_res1.png> <./Figure/xss3_res2.png>]
 
-[80]
+[84]
 
-[81]
-<Figure/length.png, id=2058, 368.87813pt x 22.58438pt>
+[85]
+<Figure/length.png, id=2013, 368.87813pt x 22.58438pt>
 File: Figure/length.png Graphic file (type png)
 <use Figure/length.png>
-Package pdftex.def Info: Figure/length.png  used on input line 100.
-(pdftex.def)             Requested size: 298.75264pt x 18.29082pt.
-<Figure/xss2_res_med.png, id=2059, 432.86719pt x 231.86626pt>
+Package pdftex.def Info: Figure/length.png  used on input line 99.
+(pdftex.def)             Requested size: 362.77525pt x 22.21074pt.
+<Figure/xss2_res_med.png, id=2014, 432.86719pt x 231.86626pt>
 File: Figure/xss2_res_med.png Graphic file (type png)
 <use Figure/xss2_res_med.png>
-Package pdftex.def Info: Figure/xss2_res_med.png  used on input line 106.
-(pdftex.def)             Requested size: 298.75264pt x 160.03387pt.
-<Figure/xss_res_med2.png, id=2060, 655.69969pt x 225.84375pt>
+Package pdftex.def Info: Figure/xss2_res_med.png  used on input line 105.
+(pdftex.def)             Requested size: 362.77525pt x 194.33115pt.
+<Figure/xss_res_med2.png, id=2015, 655.69969pt x 225.84375pt>
 File: Figure/xss_res_med2.png Graphic file (type png)
 <use Figure/xss_res_med2.png>
-Package pdftex.def Info: Figure/xss_res_med2.png  used on input line 110.
-(pdftex.def)             Requested size: 298.75264pt x 102.90034pt.
+Package pdftex.def Info: Figure/xss_res_med2.png  used on input line 109.
+(pdftex.def)             Requested size: 362.77525pt x 124.9519pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-[82 <./Figure/length.png> <./Figure/xss2_res_med.png> <./Figure/xss_res_med2.png>]
 
-[83]
+[86 <./Figure/length.png> <./Figure/xss2_res_med.png>]
 
-[84])
+[87 <./Figure/xss_res_med2.png>]
 
-[85] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Reflected_XSS.tex
+[88])
 
-[86]
-<Figure/xss2_res.png, id=2116, 423.83344pt x 137.7647pt>
+[89] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Reflected_XSS.tex
+
+[90]
+<Figure/xss2_res.png, id=2070, 423.83344pt x 137.7647pt>
 File: Figure/xss2_res.png Graphic file (type png)
 <use Figure/xss2_res.png>
 Package pdftex.def Info: Figure/xss2_res.png  used on input line 25.
-(pdftex.def)             Requested size: 298.75264pt x 97.1115pt.
+(pdftex.def)             Requested size: 362.77525pt x 117.92245pt.
 
 
-[87 <./Figure/xss2_res.png>]
-
-[88]
-<Figure/xss2_res2.png, id=2140, 915.42pt x 179.92218pt>
-File: Figure/xss2_res2.png Graphic file (type png)
-<use Figure/xss2_res2.png>
-Package pdftex.def Info: Figure/xss2_res2.png  used on input line 57.
-(pdftex.def)             Requested size: 298.75264pt x 58.71835pt.
-
-
-[89 <./Figure/xss2_res2.png>]
-File: Figure/xss2_res2.png Graphic file (type png)
-<use Figure/xss2_res2.png>
-Package pdftex.def Info: Figure/xss2_res2.png  used on input line 90.
-(pdftex.def)             Requested size: 298.75264pt x 58.71835pt.
-)
-
-[90] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\DOM_XSS.tex
-
-[91]
+[91 <./Figure/xss2_res.png>]
 
 [92]
-<Figure/xss_cookie.png, id=2221, 331.99031pt x 118.94438pt>
+<Figure/xss2_res2.png, id=2095, 915.42pt x 179.92218pt>
+File: Figure/xss2_res2.png Graphic file (type png)
+<use Figure/xss2_res2.png>
+Package pdftex.def Info: Figure/xss2_res2.png  used on input line 56.
+(pdftex.def)             Requested size: 362.77525pt x 71.30046pt.
+
+Overfull \hbox (2.71559pt too wide) in paragraph at lines 59--60
+\T5/ptm/b/n/13 Patching: \T5/ptm/m/n/13 Since the pro-gram logic re-mains un-changed, we can use the same method
+ []
+
+
+
+[93 <./Figure/xss2_res2.png>]
+File: Figure/xss2_res2.png Graphic file (type png)
+<use Figure/xss2_res2.png>
+Package pdftex.def Info: Figure/xss2_res2.png  used on input line 87.
+(pdftex.def)             Requested size: 362.77525pt x 71.30046pt.
+)
+
+[94] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\DOM_XSS.tex
+
+[95]
+
+[96]
+<Figure/xss_cookie.png, id=2175, 331.99031pt x 118.94438pt>
 File: Figure/xss_cookie.png Graphic file (type png)
 <use Figure/xss_cookie.png>
 Package pdftex.def Info: Figure/xss_cookie.png  used on input line 47.
-(pdftex.def)             Requested size: 298.75264pt x 107.04167pt.
+(pdftex.def)             Requested size: 362.77525pt x 129.98073pt.
 
 
-[93 <./Figure/xss_cookie.png>]
+[97 <./Figure/xss_cookie.png>]
+Overfull \hbox (12.91978pt too wide) in paragraph at lines 64--65
+\T5/ptm/m/n/13 This patched code safely reads the de-fault pa-ram-e-ter from the URL us-ing URLSearch-
+ []
 
-[94]
-<Figure/dom2.png, id=2247, 325.215pt x 128.73094pt>
+
+
+[98]
+
+[99]
+<Figure/dom2.png, id=2218, 325.215pt x 128.73094pt>
 File: Figure/dom2.png Graphic file (type png)
 <use Figure/dom2.png>
-Package pdftex.def Info: Figure/dom2.png  used on input line 95.
-(pdftex.def)             Requested size: 298.75264pt x 118.26495pt.
+Package pdftex.def Info: Figure/dom2.png  used on input line 113.
+(pdftex.def)             Requested size: 362.77525pt x 143.60997pt.
 
 
-[95])
+[100])
 
-[96 <./Figure/dom2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\CSP_Bypass.tex
+[101 <./Figure/dom2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\CSP_Bypass.tex
 Overfull \hbox (8.36981pt too wide) in paragraph at lines 4--5
 \T5/ptm/m/n/13 To en-able CSP, a re-sponse needs to in-clude an HTTP re-sponse header called Content-
  []
 
 
 
-[97]
+[102]
 
-[98]
-<Figure/csp_low2.png, id=2317, 328.97906pt x 126.4725pt>
+[103]
+<Figure/csp_low2.png, id=2288, 328.97906pt x 126.4725pt>
 File: Figure/csp_low2.png Graphic file (type png)
 <use Figure/csp_low2.png>
 Package pdftex.def Info: Figure/csp_low2.png  used on input line 56.
-(pdftex.def)             Requested size: 298.75264pt x 114.8547pt.
-<Figure/csp_low3.png, id=2318, 536.75531pt x 72.27pt>
+(pdftex.def)             Requested size: 362.77525pt x 139.46753pt.
+<Figure/csp_low3.png, id=2289, 536.75531pt x 72.27pt>
 File: Figure/csp_low3.png Graphic file (type png)
 <use Figure/csp_low3.png>
 Package pdftex.def Info: Figure/csp_low3.png  used on input line 62.
-(pdftex.def)             Requested size: 298.75264pt x 40.22499pt.
+(pdftex.def)             Requested size: 362.77525pt x 48.84518pt.
 
 
-[99 <./Figure/csp_low2.png> <./Figure/csp_low3.png>]
-Overfull \hbox (28.7675pt too wide) in paragraph at lines 96--97
+[104 <./Figure/csp_low2.png> <./Figure/csp_low3.png>]
+
+[105]
+Overfull \hbox (28.7675pt too wide) in paragraph at lines 99--101
 \T5/ptm/m/n/13 "<script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert(1)</script>" 
  []
 
 
 
-[100]
-<Figure/csp_med2.png, id=2364, 615.0478pt x 438.8897pt>
+[106]
+<Figure/csp_med2.png, id=2339, 615.0478pt x 438.8897pt>
 File: Figure/csp_med2.png Graphic file (type png)
 <use Figure/csp_med2.png>
-Package pdftex.def Info: Figure/csp_med2.png  used on input line 100.
-(pdftex.def)             Requested size: 298.75264pt x 213.18939pt.
+Package pdftex.def Info: Figure/csp_med2.png  used on input line 104.
+(pdftex.def)             Requested size: 362.77525pt x 258.8757pt.
 
 
-[101 <./Figure/csp_med2.png>]
-<Figure/csp_high2.png, id=2371, 484.81125pt x 282.30469pt>
+[107 <./Figure/csp_med2.png>]
+<Figure/csp_high2.png, id=2346, 484.81125pt x 282.30469pt>
 File: Figure/csp_high2.png Graphic file (type png)
 <use Figure/csp_high2.png>
-Package pdftex.def Info: Figure/csp_high2.png  used on input line 134.
-(pdftex.def)             Requested size: 298.75264pt x 173.97173pt.
+Package pdftex.def Info: Figure/csp_high2.png  used on input line 140.
+(pdftex.def)             Requested size: 362.77525pt x 211.25415pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[102])
+[108])
 
-[103 <./Figure/csp_high2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\JS_attacks.tex
+[109 <./Figure/csp_high2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\JS_attacks.tex
 
-[104]
-<Figure/js_low1.png, id=2409, 337.26pt x 102.3825pt>
+[110]
+<Figure/js_low1.png, id=2384, 337.26pt x 102.3825pt>
 File: Figure/js_low1.png Graphic file (type png)
 <use Figure/js_low1.png>
-Package pdftex.def Info: Figure/js_low1.png  used on input line 11.
-(pdftex.def)             Requested size: 298.75264pt x 90.6952pt.
+Package pdftex.def Info: Figure/js_low1.png  used on input line 15.
+(pdftex.def)             Requested size: 362.77525pt x 110.13089pt.
 
-Overfull \hbox (702.68802pt too wide) in paragraph at lines 41--41
+Overfull \hbox (702.68802pt too wide) in paragraph at lines 45--45
 []\T5/pcr/m/n/13 !function(n){"use strict";function t(n,t){var r=(65535&n)+(65535&t);return(n>>16)+(t>>16)+(r>>16)<<16|65535&r}function r(n,t){return n<<t|n>>>32-
  []
 
 
-Overfull \hbox (2409.15959pt too wide) in paragraph at lines 41--41
+Overfull \hbox (2409.15959pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 t}function e(n,e,o,u,c,f){return t(r(t(t(e,n),t(u,f)),c),o)}function o(n,t,r,o,u,c,f){return e(t&r|~t&o,n,t,u,c,f)}function u(n,t,r,o,u,c,f){return e(t&o|r&~o,n,t,u,c,f)}function c(n,t,r,o,u,c,f){return e(t^r^o,n,t,u,c,f)}function f(n,t,r,o,u,c,f){return e(r^(t|~o),n,t,u,c,f)}function i(n,r){n[r>>5]|=128<<r%32,n[14+(r+64>>>9<<4)]=r;var e,i,a,d,h,l=1732584193,g=-
  []
 
 
-Overfull \hbox (937.31216pt too wide) in paragraph at lines 41--41
+Overfull \hbox (937.31216pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 271733879,v=-1732584194,m=271733878;for(e=0;e<n.length;e+=16)i=l,a=g,d=v,h=m,g=f(g=f(g=f(g=f(g=c(g=c(g=c(g=c(g=u(g=u(g=u(g=u(g=o(g=o(g=o(g=o(g,v=o(v,m=o(m,l=o(l,g,v,m,n[e],7,-
  []
 
 
-Overfull \hbox (173.80888pt too wide) in paragraph at lines 41--41
+Overfull \hbox (173.80888pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 680876936),g,v,n[e+1],12,-389564586),l,g,n[e+2],17,606105819),m,l,n[e+3],22,-
  []
 
 
-Overfull \hbox (337.60895pt too wide) in paragraph at lines 41--41
+Overfull \hbox (337.60895pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1044525330),v=o(v,m=o(m,l=o(l,g,v,m,n[e+4],7,-176418897),g,v,n[e+5],12,1200080426),l,g,n[e+6],17,-
  []
 
 
-Overfull \hbox (329.80894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (329.80894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1473231341),m,l,n[e+7],22,-45705983),v=o(v,m=o(m,l=o(l,g,v,m,n[e+8],7,1770035416),g,v,n[e+9],12,-
  []
 
 
-Overfull \hbox (548.20903pt too wide) in paragraph at lines 41--41
+Overfull \hbox (548.20903pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1958414417),l,g,n[e+10],17,-42063),m,l,n[e+11],22,-1990404162),v=o(v,m=o(m,l=o(l,g,v,m,n[e+12],7,1804603682),g,v,n[e+13],12,-
  []
 
 
-Overfull \hbox (345.40895pt too wide) in paragraph at lines 41--41
+Overfull \hbox (345.40895pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 40341101),l,g,n[e+14],17,-1502002290),m,l,n[e+15],22,1236535329),v=u(v,m=u(m,l=u(l,g,v,m,n[e+1],5,-
  []
 
 
-Overfull \hbox (166.00888pt too wide) in paragraph at lines 41--41
+Overfull \hbox (166.00888pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 165796510),g,v,n[e+6],9,-1069501632),l,g,n[e+11],14,643717713),m,l,n[e],20,-
  []
 
 
-Overfull \hbox (322.00894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (322.00894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 373897302),v=u(v,m=u(m,l=u(l,g,v,m,n[e+5],5,-701558691),g,v,n[e+10],9,38016083),l,g,n[e+15],14,-
  []
 
 
-Overfull \hbox (322.00894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (322.00894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 660478335),m,l,n[e+4],20,-405537848),v=u(v,m=u(m,l=u(l,g,v,m,n[e+9],5,568446438),g,v,n[e+14],9,-
  []
 
 
-Overfull \hbox (345.40895pt too wide) in paragraph at lines 41--41
+Overfull \hbox (345.40895pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1019803690),l,g,n[e+3],14,-187363961),m,l,n[e+8],20,1163531501),v=u(v,m=u(m,l=u(l,g,v,m,n[e+13],5,-
  []
 
 
-Overfull \hbox (181.60889pt too wide) in paragraph at lines 41--41
+Overfull \hbox (181.60889pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1444681467),g,v,n[e+2],9,-51403784),l,g,n[e+7],14,1735328473),m,l,n[e+12],20,-
  []
 
 
-Overfull \hbox (111.40886pt too wide) in paragraph at lines 41--41
+Overfull \hbox (111.40886pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1926607734),v=c(v,m=c(m,l=c(l,g,v,m,n[e+5],4,-378558),g,v,n[e+8],11,-
  []
 
 
-Overfull \hbox (2.20882pt too wide) in paragraph at lines 41--41
+Overfull \hbox (2.20882pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 2022574463),l,g,n[e+11],16,1839030562),m,l,n[e+14],23,-
  []
 
 
-Overfull \hbox (329.80894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (329.80894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 35309556),v=c(v,m=c(m,l=c(l,g,v,m,n[e+1],4,-1530992060),g,v,n[e+4],11,1272893353),l,g,n[e+7],16,-
  []
 
 
-Overfull \hbox (329.80894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (329.80894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 155497632),m,l,n[e+10],23,-1094730640),v=c(v,m=c(m,l=c(l,g,v,m,n[e+13],4,681279174),g,v,n[e],11,-
  []
 
 
-Overfull \hbox (314.20894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (314.20894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 358537222),l,g,n[e+3],16,-722521979),m,l,n[e+6],23,76029189),v=c(v,m=c(m,l=c(l,g,v,m,n[e+9],4,-
  []
 
 
-Overfull \hbox (189.40889pt too wide) in paragraph at lines 41--41
+Overfull \hbox (189.40889pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 640364487),g,v,n[e+12],11,-421815835),l,g,n[e+15],16,530742520),m,l,n[e+2],23,-
  []
 
 
-Overfull \hbox (322.00894pt too wide) in paragraph at lines 41--41
+Overfull \hbox (322.00894pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 995338651),v=f(v,m=f(m,l=f(l,g,v,m,n[e],6,-198630844),g,v,n[e+7],10,1126891415),l,g,n[e+14],15,-
  []
 
 
-Overfull \hbox (337.60895pt too wide) in paragraph at lines 41--41
+Overfull \hbox (337.60895pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1416354905),m,l,n[e+5],21,-57434055),v=f(v,m=f(m,l=f(l,g,v,m,n[e+12],6,1700485571),g,v,n[e+3],10,-
  []
 
 
-Overfull \hbox (548.20903pt too wide) in paragraph at lines 41--41
+Overfull \hbox (548.20903pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1894986606),l,g,n[e+10],15,-1051523),m,l,n[e+1],21,-2054922799),v=f(v,m=f(m,l=f(l,g,v,m,n[e+8],6,1873313359),g,v,n[e+15],10,-
  []
 
 
-Overfull \hbox (337.60895pt too wide) in paragraph at lines 41--41
+Overfull \hbox (337.60895pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 30611744),l,g,n[e+6],15,-1560198380),m,l,n[e+13],21,1309151649),v=f(v,m=f(m,l=f(l,g,v,m,n[e+4],6,-
  []
 
 
-Overfull \hbox (189.40889pt too wide) in paragraph at lines 41--41
+Overfull \hbox (189.40889pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 145523070),g,v,n[e+11],10,-1120210379),l,g,n[e+2],15,718787259),m,l,n[e+9],21,-
  []
 
 
-Overfull \hbox (1254.30418pt too wide) in paragraph at lines 41--41
+Overfull \hbox (1254.30418pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 343485551),l=t(l,i),g=t(g,a),v=t(v,d),m=t(m,h);return[l,g,v,m]}function a(n){var t,r="",e=32*n.length;for(t=0;t<e;t+=8)r+=String.fromCharCode(n[t>>5]>>>t%32&255);return r}function d(n){var t,r=[];for(r[(n.length>>2)-
  []
 
 
-Overfull \hbox (6588.21875pt too wide) in paragraph at lines 41--41
+Overfull \hbox (6588.21875pt too wide) in paragraph at lines 45--45
 \T5/pcr/m/n/13 1]=void 0,t=0;t<r.length;t+=1)r[t]=0;var e=8*n.length;for(t=0;t<e;t+=8)r[t>>5]|=(255&n.charCodeAt(t/8))<<t%32;return r}function h(n){return a(i(d(n),8*n.length))}function l(n,t){var r,e,o=d(n),u=[],c=[];for(u[15]=c[15]=void 0,o.length>16&&(o=i(o,8*n.length)),r=0;r<16;r+=1)u[r]=909522486^o[r],c[r]=1549556828^o[r];return e=i(u.concat(d(t)),512+8*t.length),a(i(c.concat(e),640))}function g(n){var t,r,e="";for(r=0;r<n.length;r+=1)t=n.charCodeAt(r),e+="0123456789abcdef".charAt(t>>>4&15)+"0123456789abcdef".charAt(15&t);return e}function v(n){return unescape(encodeURIComponent(n))}function m(n){return h(v(n))}function p(n){return g(m(n))}function s(n,t){return l(v(n),v(t))}function C(n,t){return g(s(n,t))}function A(n,t,r){return t?r?s(t,n):C(t,n):r?m(n):p(n)}"function"==typeof define&&define.amd?define(function(){return A}):"object"==typeof module&&module.exports?module.exports=A:n.md5=A}(this);[] 
  []
 
 
-Underfull \vbox (badness 1043) has occurred while \output is active []
+Underfull \vbox (badness 1062) has occurred while \output is active []
 
 
 
-[105 <./Figure/js_low1.png>]
-Overfull \hbox (522.4559pt too wide) in paragraph at lines 41--41
+[111 <./Figure/js_low1.png>]
+Overfull \hbox (522.4559pt too wide) in paragraph at lines 45--45
 []        \T5/pcr/m/n/13 return inp.replace(/[a-zA-Z]/g,function(c){return String.fromCharCode((c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-
  []
 
 
-Overfull \hbox (47.9038pt too wide) in paragraph at lines 41--41
+Overfull \hbox (47.9038pt too wide) in paragraph at lines 45--45
 []        \T5/pcr/m/n/13 var phrase = document.getElementById("phrase").value;[] 
  []
 
 
-Overfull \hbox (101.42479pt too wide) in paragraph at lines 41--41
+Overfull \hbox (101.42479pt too wide) in paragraph at lines 45--45
 []        \T5/pcr/m/n/13 document.getElementById("token").value = md5(rot13(phrase));[] 
  []
 
-<Figure/js_low.png, id=2416, 839.38594pt x 159.59625pt>
+<Figure/js_low.png, id=2391, 839.38594pt x 159.59625pt>
 File: Figure/js_low.png Graphic file (type png)
 <use Figure/js_low.png>
-Package pdftex.def Info: Figure/js_low.png  used on input line 46.
-(pdftex.def)             Requested size: 426.79135pt x 81.14703pt.
-<Figure/js_low2.png, id=2417, 355.3275pt x 178.41656pt>
+Package pdftex.def Info: Figure/js_low.png  used on input line 50.
+(pdftex.def)             Requested size: 362.77525pt x 68.97571pt.
+
+
+[112 <./Figure/js_low.png>]
+<Figure/js_low2.png, id=2398, 355.3275pt x 178.41656pt>
 File: Figure/js_low2.png Graphic file (type png)
 <use Figure/js_low2.png>
-Package pdftex.def Info: Figure/js_low2.png  used on input line 52.
-(pdftex.def)             Requested size: 298.75264pt x 150.01315pt.
-
-
-[106 <./Figure/js_low.png>]
-<Figure/js_low6.png, id=2424, 490.83376pt x 15.05624pt>
+Package pdftex.def Info: Figure/js_low2.png  used on input line 56.
+(pdftex.def)             Requested size: 362.77525pt x 182.16214pt.
+<Figure/js_low6.png, id=2399, 490.83376pt x 15.05624pt>
 File: Figure/js_low6.png Graphic file (type png)
 <use Figure/js_low6.png>
-Package pdftex.def Info: Figure/js_low6.png  used on input line 56.
-(pdftex.def)             Requested size: 298.75264pt x 9.16452pt.
+Package pdftex.def Info: Figure/js_low6.png  used on input line 60.
+(pdftex.def)             Requested size: 362.77525pt x 11.12834pt.
 
 
-[107 <./Figure/js_low2.png> <./Figure/js_low6.png>]
-<Figure/js_low3.png, id=2433, 385.44pt x 177.66376pt>
+[113 <./Figure/js_low2.png> <./Figure/js_low6.png>]
+<Figure/js_low3.png, id=2408, 385.44pt x 177.66376pt>
 File: Figure/js_low3.png Graphic file (type png)
 <use Figure/js_low3.png>
-Package pdftex.def Info: Figure/js_low3.png  used on input line 63.
-(pdftex.def)             Requested size: 298.75264pt x 137.70424pt.
-<Figure/js_low4.png, id=2434, 612.03656pt x 102.3825pt>
+Package pdftex.def Info: Figure/js_low3.png  used on input line 67.
+(pdftex.def)             Requested size: 362.77525pt x 167.2154pt.
+<Figure/js_low4.png, id=2409, 612.03656pt x 102.3825pt>
 File: Figure/js_low4.png Graphic file (type png)
 <use Figure/js_low4.png>
-Package pdftex.def Info: Figure/js_low4.png  used on input line 68.
-(pdftex.def)             Requested size: 298.75264pt x 49.97571pt.
+Package pdftex.def Info: Figure/js_low4.png  used on input line 72.
+(pdftex.def)             Requested size: 362.77525pt x 60.68478pt.
 
 
-[108 <./Figure/js_low3.png> <./Figure/js_low4.png>]
-<Figure/js_med3.png, id=2443, 451.6875pt x 103.13531pt>
+[114 <./Figure/js_low3.png> <./Figure/js_low4.png>]
+<Figure/js_med3.png, id=2418, 451.6875pt x 103.13531pt>
 File: Figure/js_med3.png Graphic file (type png)
 <use Figure/js_med3.png>
-Package pdftex.def Info: Figure/js_med3.png  used on input line 87.
-(pdftex.def)             Requested size: 298.75264pt x 68.219pt.
-)
+Package pdftex.def Info: Figure/js_med3.png  used on input line 104.
+(pdftex.def)             Requested size: 362.77525pt x 82.83882pt.
 
-[109 <./Figure/js_med3.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Authorization_Bypass.tex
 
-[110]
+[115 <./Figure/js_med3.png>])
+
+[116] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Authorization_Bypass.tex
+
+[117]
 Overfull \hbox (61.8526pt too wide) in paragraph at lines 21--22
 \T5/ptm/m/n/13 where, specif-i-cally in the dvwaHtm-lE-cho func-tion lo-cated in dvwa/includes/dvwaPage.inc.php. 
  []
 
-<Figure/auth1.png, id=2461, 222.07968pt x 81.30376pt>
-File: Figure/auth1.png Graphic file (type png)
-<use Figure/auth1.png>
-Package pdftex.def Info: Figure/auth1.png  used on input line 27.
-(pdftex.def)             Requested size: 298.75264pt x 109.3819pt.
 
-Overfull \hbox (129.0885pt too wide) in paragraph at lines 29--30
-\T5/ptm/m/n/13 How-ever, since we know that the page is lo-cated at "http://192.168.54.6/DVWA/vulnerabilities/authbypass/",
- []
 
-<Figure/auth2.png, id=2462, 186.6975pt x 127.97812pt>
-File: Figure/auth2.png Graphic file (type png)
-<use Figure/auth2.png>
-Package pdftex.def Info: Figure/auth2.png  used on input line 33.
-(pdftex.def)             Requested size: 298.75264pt x 204.8004pt.
+[118]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[119]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[120]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[121]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[122]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[123]
+<Figure/auth_res_low.png, id=2637, 633.11531pt x 294.34969pt>
+File: Figure/auth_res_low.png Graphic file (type png)
+<use Figure/auth_res_low.png>
+Package pdftex.def Info: Figure/auth_res_low.png  used on input line 202.
+(pdftex.def)             Requested size: 362.77525pt x 168.66586pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[111 <./Figure/auth1.png>]
+[124]
 
-[112 <./Figure/auth2.png>]
-<Figure/auth_med2.png, id=2487, 1402.48969pt x 48.18pt>
+[125 <./Figure/auth_res_low.png>]
+<Figure/auth_med2.png, id=2680, 1079.53313pt x 99.37125pt>
 File: Figure/auth_med2.png Graphic file (type png)
 <use Figure/auth_med2.png>
-Package pdftex.def Info: Figure/auth_med2.png  used on input line 62.
-(pdftex.def)             Requested size: 298.75264pt x 10.26291pt.
+Package pdftex.def Info: Figure/auth_med2.png  used on input line 243.
+(pdftex.def)             Requested size: 362.77525pt x 33.39305pt.
 
-Overfull \hbox (44.05559pt too wide) in paragraph at lines 59--63
+Overfull \hbox (44.05559pt too wide) in paragraph at lines 240--244
 \T5/ptm/m/n/13 ties/authbypass/get_user_data.php and vul-ner-a-bil-i-ties/authbypass/change_user_details.php.
  []
 
 
 
-[113 <./Figure/auth_med2.png>]
-<Figure/auth_high1.png, id=2513, 807.015pt x 76.03406pt>
+[126 <./Figure/auth_med2.png>]
+<Figure/auth_high1.png, id=2706, 807.015pt x 76.03406pt>
 File: Figure/auth_high1.png Graphic file (type png)
 <use Figure/auth_high1.png>
-Package pdftex.def Info: Figure/auth_high1.png  used on input line 90.
-(pdftex.def)             Requested size: 298.75264pt x 28.14723pt.
+Package pdftex.def Info: Figure/auth_high1.png  used on input line 273.
+(pdftex.def)             Requested size: 362.77525pt x 34.17903pt.
 
-Overfull \hbox (11.89354pt too wide) in paragraph at lines 92--93
+Overfull \hbox (11.89354pt too wide) in paragraph at lines 275--276
 \T5/ptm/m/n/13 Moreover, when we try to ac-cess vul-ner-a-bil-i-ties/authbypass/change_user_details.php,
  []
 
-<Figure/auth_high2.png, id=2514, 813.79031pt x 70.76437pt>
+<Figure/auth_high2.png, id=2707, 813.79031pt x 70.76437pt>
 File: Figure/auth_high2.png Graphic file (type png)
 <use Figure/auth_high2.png>
-Package pdftex.def Info: Figure/auth_high2.png  used on input line 96.
-(pdftex.def)             Requested size: 298.75264pt x 25.97832pt.
-<Figure/auth_high3.png, id=2515, 541.27219pt x 42.91031pt>
+Package pdftex.def Info: Figure/auth_high2.png  used on input line 279.
+(pdftex.def)             Requested size: 362.77525pt x 31.54564pt.
+<Figure/auth_high3.png, id=2708, 541.27219pt x 42.91031pt>
 File: Figure/auth_high3.png Graphic file (type png)
 <use Figure/auth_high3.png>
-Package pdftex.def Info: Figure/auth_high3.png  used on input line 102.
-(pdftex.def)             Requested size: 298.75264pt x 23.68454pt.
-<Figure/auth_high4.png, id=2516, 1022.31938pt x 242.40562pt>
+Package pdftex.def Info: Figure/auth_high3.png  used on input line 285.
+(pdftex.def)             Requested size: 362.77525pt x 28.76021pt.
+<Figure/auth_high4.png, id=2709, 560.0925pt x 312.41719pt>
 File: Figure/auth_high4.png Graphic file (type png)
 <use Figure/auth_high4.png>
-Package pdftex.def Info: Figure/auth_high4.png  used on input line 108.
-(pdftex.def)             Requested size: 298.75264pt x 70.83585pt.
-)
+Package pdftex.def Info: Figure/auth_high4.png  used on input line 291.
+(pdftex.def)             Requested size: 362.77525pt x 202.36322pt.
 
-[114 <./Figure/auth_high1.png> <./Figure/auth_high2.png> <./Figure/auth_high3.png>]
+Overfull \hbox (34.70842pt too wide) in paragraph at lines 287--292
+\T5/ptm/m/n/13 i-ties/authbypass/get_user_data.php which is "id":1,"username":"Bob","last_name":"Bob"
+ []
 
-[115 <./Figure/auth_high4.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\HTTP_redirect.tex
+<Figure/auth_high5.png, id=2710, 560.0925pt x 237.13594pt>
+File: Figure/auth_high5.png Graphic file (type png)
+<use Figure/auth_high5.png>
+Package pdftex.def Info: Figure/auth_high5.png  used on input line 295.
+(pdftex.def)             Requested size: 362.77525pt x 153.601pt.
+
+
+[127 <./Figure/auth_high1.png> <./Figure/auth_high2.png> <./Figure/auth_high3.png>])
+
+[128 <./Figure/auth_high4.png> <./Figure/auth_high5.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\HTTP_redirect.tex
 Overfull \hbox (26.90858pt too wide) in paragraph at lines 2--3
 \T5/ptm/m/n/13 Open redi-rec-tion vul-ner-a-bil-i-ties arise when an ap-pli-ca-tion in-cor-po-rates user-controllable
  []
 
 
 
-[116]
-<Figure/http1.png, id=2556, 533.74406pt x 191.9672pt>
+[129]
+<Figure/http1.png, id=2752, 533.74406pt x 191.9672pt>
 File: Figure/http1.png Graphic file (type png)
 <use Figure/http1.png>
 Package pdftex.def Info: Figure/http1.png  used on input line 28.
-(pdftex.def)             Requested size: 298.75264pt x 107.45403pt.
-<Figure/http_low1.png, id=2557, 560.0925pt x 225.09094pt>
+(pdftex.def)             Requested size: 362.77525pt x 130.4803pt.
+<Figure/http_low1.png, id=2753, 560.0925pt x 225.09094pt>
 File: Figure/http_low1.png Graphic file (type png)
 <use Figure/http_low1.png>
 Package pdftex.def Info: Figure/http_low1.png  used on input line 34.
-(pdftex.def)             Requested size: 298.75264pt x 120.06697pt.
-<Figure/http_low2.png, id=2558, 560.8453pt x 187.45032pt>
+(pdftex.def)             Requested size: 362.77525pt x 145.79904pt.
+<Figure/http_low2.png, id=2754, 560.8453pt x 187.45032pt>
 File: Figure/http_low2.png Graphic file (type png)
 <use Figure/http_low2.png>
 Package pdftex.def Info: Figure/http_low2.png  used on input line 38.
-(pdftex.def)             Requested size: 298.75264pt x 99.84872pt.
+(pdftex.def)             Requested size: 362.77525pt x 121.24918pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[117 <./Figure/http1.png>]
+[130 <./Figure/http1.png>]
+Overfull \hbox (16.91151pt too wide) in paragraph at lines 42--43
+\T5/ptm/b/n/13 Patching: \T5/ptm/m/n/13 To mit-i-gate the vul-ner-a-bil-ity, we need to pre-vent un-val-i-dated user-controlled
+ []
 
-[118 <./Figure/http_low1.png> <./Figure/http_low2.png>]
-<Figure/http_med1.png, id=2586, 551.81157pt x 224.33812pt>
+
+
+[131 <./Figure/http_low1.png> <./Figure/http_low2.png>]
+<Figure/http_med1.png, id=2782, 551.81157pt x 224.33812pt>
 File: Figure/http_med1.png Graphic file (type png)
 <use Figure/http_med1.png>
-Package pdftex.def Info: Figure/http_med1.png  used on input line 70.
-(pdftex.def)             Requested size: 426.79135pt x 173.51793pt.
-<Figure/http_med2.png, id=2587, 558.58687pt x 186.6975pt>
+Package pdftex.def Info: Figure/http_med1.png  used on input line 72.
+(pdftex.def)             Requested size: 362.77525pt x 147.49194pt.
+<Figure/http_med2.png, id=2783, 558.58687pt x 186.6975pt>
 File: Figure/http_med2.png Graphic file (type png)
 <use Figure/http_med2.png>
-Package pdftex.def Info: Figure/http_med2.png  used on input line 74.
-(pdftex.def)             Requested size: 426.79135pt x 142.65219pt.
+Package pdftex.def Info: Figure/http_med2.png  used on input line 76.
+(pdftex.def)             Requested size: 362.77525pt x 121.25507pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[119]
-
-[120 <./Figure/http_med1.png> <./Figure/http_med2.png>]
-Overfull \hbox (5.02956pt too wide) in paragraph at lines 102--103
-\T5/ptm/m/n/13 The high level code fur-ther tight-ens the redi-rect logic by in-tro-duc-ing a strict whitelist
- []
-
-<Figure/http_high1.png, id=2621, 554.82281pt x 227.34938pt>
-File: Figure/http_high1.png Graphic file (type png)
-<use Figure/http_high1.png>
-Package pdftex.def Info: Figure/http_high1.png  used on input line 106.
-(pdftex.def)             Requested size: 426.79135pt x 174.8861pt.
-<Figure/http_high2.png, id=2622, 548.0475pt x 180.675pt>
-File: Figure/http_high2.png Graphic file (type png)
-<use Figure/http_high2.png>
-Package pdftex.def Info: Figure/http_high2.png  used on input line 110.
-(pdftex.def)             Requested size: 426.79135pt x 140.7026pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[121])
-
-[122 <./Figure/http_high1.png> <./Figure/http_high2.png>] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Cryptography.tex
-
-[123]
-
-[124]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[125]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[126]
-<Figure/cryp1.png, id=2773, 613.54219pt x 279.29344pt>
-File: Figure/cryp1.png Graphic file (type png)
-<use Figure/cryp1.png>
-Package pdftex.def Info: Figure/cryp1.png  used on input line 136.
-(pdftex.def)             Requested size: 298.75264pt x 135.99838pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[127]
-<Figure/cryp2.png, id=2792, 1149.5447pt x 439.6425pt>
-File: Figure/cryp2.png Graphic file (type png)
-<use Figure/cryp2.png>
-Package pdftex.def Info: Figure/cryp2.png  used on input line 143.
-(pdftex.def)             Requested size: 298.75264pt x 114.25739pt.
-
-
-[128 <./Figure/cryp1.png> <./Figure/cryp2.png>]
-
-[129]
-Overfull \hbox (958.02034pt too wide) in paragraph at lines 201--202
-[][][][] 
- []
-
-
-Overfull \hbox (681.74124pt too wide) in paragraph at lines 207--208
-[][][][] 
- []
-
-
-Overfull \hbox (951.55525pt too wide) in paragraph at lines 213--214
-[][][][] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[130]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[131]
-Overfull \hbox (28.40355pt too wide) in paragraph at lines 261--262
-\T5/ptm/m/n/13 a fixed key "ik ben een aard-bei". The de-cryp-tion ap-plies OPENSSL_PKCS1_PADDING,
- []
 
 
 
 [132]
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
+[133 <./Figure/http_med1.png> <./Figure/http_med2.png>]
+Overfull \hbox (5.02956pt too wide) in paragraph at lines 106--107
+\T5/ptm/m/n/13 The high level code fur-ther tight-ens the redi-rect logic by in-tro-duc-ing a strict whitelist
+ []
 
+<Figure/http_high1.png, id=2818, 554.82281pt x 227.34938pt>
+File: Figure/http_high1.png Graphic file (type png)
+<use Figure/http_high1.png>
+Package pdftex.def Info: Figure/http_high1.png  used on input line 110.
+(pdftex.def)             Requested size: 362.77525pt x 148.65648pt.
+<Figure/http_high2.png, id=2819, 548.0475pt x 180.675pt>
+File: Figure/http_high2.png Graphic file (type png)
+<use Figure/http_high2.png>
+Package pdftex.def Info: Figure/http_high2.png  used on input line 114.
+(pdftex.def)             Requested size: 362.77525pt x 119.59874pt.
 
-[133]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 [134]
 
-[135]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+[135 <./Figure/http_high1.png> <./Figure/http_high2.png>])
 
-
-
-[136]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+[136] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\Cryptography.tex
 
 [137]
+
+[138]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[138]
+[139]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[139])
 
-[140] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\API.tex
-Overfull \hbox (26.90858pt too wide) in paragraph at lines 2--3
-\T5/ptm/m/n/13 Open redi-rec-tion vul-ner-a-bil-i-ties arise when an ap-pli-ca-tion in-cor-po-rates user-controllable
- []
+
+[140]
+<Figure/cryp1.png, id=2993, 613.54219pt x 279.29344pt>
+File: Figure/cryp1.png Graphic file (type png)
+<use Figure/cryp1.png>
+Package pdftex.def Info: Figure/cryp1.png  used on input line 136.
+(pdftex.def)             Requested size: 362.77525pt x 165.13968pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 [141]
+<Figure/cryp2.png, id=3011, 1149.5447pt x 439.6425pt>
+File: Figure/cryp2.png Graphic file (type png)
+<use Figure/cryp2.png>
+Package pdftex.def Info: Figure/cryp2.png  used on input line 143.
+(pdftex.def)             Requested size: 362.77525pt x 138.74303pt.
 
-[142]
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
+[142 <./Figure/cryp1.png> <./Figure/cryp2.png>]
 
 [143]
+Overfull \hbox (211.33125pt too wide) in paragraph at lines 203--204
+[][][][] 
+ []
+
+
+Overfull \hbox (332.7802pt too wide) in paragraph at lines 204--205
+[][][][] 
+ []
+
+
+Overfull \hbox (681.74124pt too wide) in paragraph at lines 210--211
+[][][][] 
+ []
+
+
+Overfull \hbox (951.55525pt too wide) in paragraph at lines 216--217
+[][][][] 
+ []
+
+
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 [144]
-File: Figure/http1.png Graphic file (type png)
-<use Figure/http1.png>
-Package pdftex.def Info: Figure/http1.png  used on input line 132.
-(pdftex.def)             Requested size: 298.75264pt x 107.45403pt.
-File: Figure/http_low1.png Graphic file (type png)
-<use Figure/http_low1.png>
-Package pdftex.def Info: Figure/http_low1.png  used on input line 138.
-(pdftex.def)             Requested size: 298.75264pt x 120.06697pt.
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 
 
 [145]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Overfull \hbox (28.40355pt too wide) in paragraph at lines 264--265
+\T5/ptm/m/n/13 a fixed key "ik ben een aard-bei". The de-cryp-tion ap-plies OPENSSL_PKCS1_PADDING,
+ []
 
 
 
@@ -2408,11 +2420,6 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 [147]
-File: Figure/http_med1.png Graphic file (type png)
-<use Figure/http_med1.png>
-Package pdftex.def Info: Figure/http_med1.png  used on input line 245.
-(pdftex.def)             Requested size: 298.75264pt x 121.46255pt.
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
@@ -2420,15 +2427,23 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 [148]
 
 [149]
-Overfull \hbox (0.31052pt too wide) in paragraph at lines 268--269
-\T5/ptm/m/n/13 info.php. How-ever, it seems like that the ap-pli-ca-tion only checks whether "info.php"
- []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-File: Figure/http_high1.png Graphic file (type png)
-<use Figure/http_high1.png>
-Package pdftex.def Info: Figure/http_high1.png  used on input line 272.
-(pdftex.def)             Requested size: 298.75264pt x 122.41992pt.
-)
+
+
+[150]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[151]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[152]
+
+[153])
 
 Package glossaries Warning: No \printnoidxglossary or \printnoidxglossaries
  found. (Remove \makenoidxglossaries if you don't want any glossaries.)
@@ -2436,7 +2451,7 @@ This document will not have a glossary.
 
 
 
-[150] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\DVWA.aux)
+[154] (d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\DVWA.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-06>
@@ -2447,23 +2462,23 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
 Package rerunfilecheck Info: File `DVWA.out' has not changed.
-(rerunfilecheck)             Checksum: 1EEC43266FBF792213B66A34AE572159;10275.
+(rerunfilecheck)             Checksum: 8D2AA19BF261477681916D94801539C9;9782.
 Package logreq Info: Writing requests to 'DVWA.run.xml'.
 \openout1 = `DVWA.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
  40474 strings out of 467875
- 741554 string characters out of 5430971
- 2183445 words of memory out of 5000000
- 66178 multiletter control sequences out of 15000+600000
+ 741971 string characters out of 5430971
+ 2144445 words of memory out of 5000000
+ 66242 multiletter control sequences out of 15000+600000
  638179 words of font info for 47 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,7n,124p,3818b,4002s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <D:/tung/App/MiKTeX/fonts/type1/vntex/urwvn/ucrr8v.pfb><D:/tung/App/MiKTeX/fonts/type1/vntex/urwvn/utmb8v.pfb><D:/tung/App/MiKTeX/fonts/type1/vntex/urwvn/utmr8v.pfb>
-Output written on d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\DVWA.pdf (150 pages, 2788216 bytes).
+Output written on d:\tung\20251_DA3_20225560_Hoang_Viet_Tung_DVWA\Chapter\DVWA.pdf (154 pages, 3059822 bytes).
 PDF statistics:
- 4007 PDF objects out of 4296 (max. 8388607)
- 2577 named destinations out of 2984 (max. 500000)
- 1070 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3939 PDF objects out of 4296 (max. 8388607)
+ 2511 named destinations out of 2984 (max. 500000)
+ 1063 words of extra memory for PDF output out of 10000 (max. 10000000)
 

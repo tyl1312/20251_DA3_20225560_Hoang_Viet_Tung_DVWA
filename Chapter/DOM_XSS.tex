@@ -1,5 +1,5 @@
 \subsection{Overview}
-DOM Based XSS is an XSS attack where in the attack payload is executed as a result of modifying the DOM environment in the victim’s browser used by the original client side script, so that the client side code runs in an unexpected manner. That is, the page itself (the HTTP response that is) does not change, but the client side code contained in the page executes differently due to the malicious modifications that have occurred in the DOM environment.
+DOM Based XSS is an XSS attack in which the malicious payload is executed as a result of modifying the DOM environment in the victim’s browser used by the original client side script, so that the client side code runs in an unexpected manner. That is, the page itself (the HTTP response that is) does not change, but the client side code contained in the page executes differently due to the malicious modifications that have occurred in the DOM environment.
 
 \noindent \textbf{Objective:} Execute a malicious script in victim's browser
 
@@ -41,11 +41,27 @@ DOM Based XSS is an XSS attack where in the attack payload is executed as a resu
 
 \noindent By viewing the page source, we can see that the script extracts user-controlled input from the URL parameter following default= using document.location.href. The extracted value is stored in the variable lang and is then written directly into the page using document.write(). Specifically, this value is inserted into both the value attribute of an <option> element and the visible option text, where it is decoded using decodeURI().
 
-\noindent Because the input taken from the URL is written directly into the DOM without any sanitization or output encoding, the application is vulnerable to DOM-based XSS. An attacker can exploit this by supplying a malicious payload in the default parameter. For example, providing the payload <script>alert(document.cookie)</script> causes the browser to dynamically generate an <option> element containing executable JavaScript. As a result, the injected script executes in the victim’s browser and displays the user’s cookie, demonstrating successful exploitation of the vulnerability.
+\noindent Because the input taken from the URL is written directly into the DOM without any sanitization or output encoding, the application is vulnerable to DOM-based XSS. An attacker can exploit this by supplying a malicious payload in the default parameter. For example, providing the payload <script>alert(document.cookie)</script> causes the browser to dynamically generate HTML containing a <script> element. As a result, the injected script executes in the victim’s browser and displays the user’s cookie, demonstrating successful exploitation of the vulnerability.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss_cookie.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss_cookie.png} 
 \end{figure}
+\noindent \textbf{Patching:} The proper fix for DOM-based XSS is to avoid using dangerous HTML sinks such as document.write()and rely on safe DOM APIs that treat user input strictly as text instead. The vulnerable code is patched by extracting URL parameters using URLSearchParams, validating the input against a whitelist of allowed values, and inserting it using textContent to prevent execution of any embedded scripts.
+
+\begin{lstlisting}
+var params = new URLSearchParams(window.location.search);
+var lang = params.get("default");
+
+var allowed = ["English", "French", "Spanish", "German"];
+
+if (allowed.includes(lang)) {
+    var option = document.createElement("option");
+    option.value = lang;
+    option.textContent = lang;  
+    document.querySelector("select[name='default']").appendChild(option);
+}
+\end{lstlisting}
+\noindent This patched code safely reads the default parameter from the URL using URLSearchParams. Before displaying the value, it checks whether the input matches one of the predefined, allowed language options. If the input is valid, a new <option> element is created and added to the drop-down list using safe DOM methods while textContent ensures that the user input is treated purely as text rather than executable HTML, preventing any injected scripts from running. As a result, payload such as <script>alert(document.cookie)</script will be treated as plain text and displayed harmlessly in the option list without execution.
 
 \newpage
 \subsection{Medium level}
@@ -64,6 +80,8 @@ if ( array_key_exists( "default", $_GET ) && !is_null ($_GET[ 'default' ]) ) {
 ?>
 \end{lstlisting}
 \noindent \noindent In the medium level, the application first checks whether the "default" parameter exists in the request and ensures that it is not NULL. Next, similar to other types of XSS defenses, the application checks whether the string "<script" exists in the \$default variable using strpos(). If detected, the user is redirected to a safe default value English, and the script stops executing. This filtering effectively blocks XSS payloads that rely on the <script> tag. However, as we all know, XSS attacks does not require <script> tag and neither does DOM-based XSS. Therefore, we can use the same tactic as we do in Stored XSS which is by using <img> tag with onerror attribute, for example: <img src=x onerror=alert(document.cookie)> as our payload.
+
+\noindent \textbf{Patching:} The patching method for medium level is similar to the low level. We should avoid using dangerous HTML sinks such as document.write()and rely on safe DOM APIs that treat user input strictly as text instead. The vulnerable code is patched by extracting URL parameters using URLSearchParams, validating the input against a whitelist of allowed values, and inserting it using textContent to prevent execution of any embedded scripts.
 
 \newpage
 \subsection{High level}
@@ -92,5 +110,7 @@ if ( array_key_exists( "default", $_GET ) && !is_null ($_GET[ 'default' ]) ) {
 \noindent However, the page contents is still generated using client-side JavaScript, which may process parts of the URL that are not validated by the server. One such component is the fragment, which is the portion that appears after the \#. Since the server does not receive the fragment portion, server-side filter cannot detect any malicious content placed in this part of the URL. In this case, the vulnerable client-side JavaScript reads data directly from the URL when rendering the page, including the fragment. Consequently, an attacker can inject malicious JavaScript into the fragment portion, such as "German\#<script>alert(document.cookie)</script>", which bypasses all server-side protections and leads to a DOM-based XSS attack when the page processes the fragment content in the browser.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/dom2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/dom2.png} 
 \end{figure}
+
+\noindent \textbf{Patching:} We will use the same patching method as in the previous levels: avoid using dangerous HTML sinks such as document.write()and rely on safe DOM APIs that treat user input strictly as text instead. The vulnerable code is patched by extracting URL parameters using URLSearchParams, validating the input against a whitelist of allowed values, and inserting it using textContent to prevent execution of any embedded scripts.

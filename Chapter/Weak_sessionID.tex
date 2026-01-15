@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 ?>
 \end{lstlisting}
 \noindent In medium level, whenever a POST request is received, the dvwaSession cookie value is set to the current Unix timestamp obtained time() function which returns the number of second since January 1st, 1970. This results in a weak session identifier because the value is highly predictable and can be easily guessed or brute forced by an attacker.
+
 \noindent \textbf{Patching:} The patching approach is similar to the low level: generate a random and unpredictable session ID using cryptographically secure methods while avoid using predictable values such as timestamps, sequential numbers, or user-specific information. 
 
 \subsection{High level}

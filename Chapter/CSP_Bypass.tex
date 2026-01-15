@@ -53,13 +53,13 @@ $page[ 'body' ] .= '
 \noindent To execute Javascript code, we need to input a trusted source defined in CSP header, in this case is "https://digi.ninja/dvwa/alert.js" which will show a popup box with "CSP Bypassed" message.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csp_low2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/csp_low2.png} 
 \end{figure}
 
 \noindent As you can see, the script is executed normally.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csp_low3.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/csp_low3.png} 
 \end{figure}
 
 \noindent \textbf{Patching:}
@@ -101,12 +101,11 @@ $page[ 'body' ] .= '
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csp_med2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/csp_med2.png} 
 \end{figure}
 \noindent Here, you can see that the script is executed normally.
 
-\noindent \textbf{Patching:}
-The patching approach is to remove 'unsafe-inline' from the CSP header and replace the static nonce with a securely generated random nonce that changes on every request. This nonce should be applied only to trusted, server-generated inline scripts and never exposed for reuse. By ensuring that each nonce is unique and unpredictable, attackers cannot guess or reuse it to execute unauthorized inline scripts. Additionally, avoid disabling XSS protections unless absolutely necessary, as they provide an additional layer of defense against XSS attacks.
+\noindent \textbf{Patching:} The patching approach is to remove 'unsafe-inline' from the CSP header and replace the static nonce with a securely generated random nonce that changes on every request. This nonce should be applied only to trusted, server-generated inline scripts and never exposed for reuse. By ensuring that each nonce is unique and unpredictable, attackers cannot guess or reuse it to execute unauthorized inline scripts. Additionally, avoid disabling XSS protections unless absolutely necessary, as they provide an additional layer of defense against XSS attacks.
 
 \newpage
 \subsection{High level}
@@ -138,9 +137,8 @@ $page[ 'body' ] .= '
 \noindent The page itself loads a trusted JavaScript file "source/high.js" from the same origin, which performs a JSONP request to "source/jsonp.php" to dynamically retrieve and execute code. Since this endpoint is hosted on the same origin, it is implicitly trusted by the CSP. 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csp_high2.png}
+  \includegraphics[width=0.85\linewidth]{Figure/csp_high2.png}
 \end{figure}
 \noindent The JavaScript code in source/high.js defines the logic executed when the user clicks the Solve the sum button. First, the clickButton() function dynamically creates a <script> element and sets its source to source/jsonp.php?callback=solveSum. This causes the browser to load and execute the response from jsonp.php. The returned script then invokes the solveSum() function to compute and display the result on the page.
 
-\noindent \textbf{Patching:}
-For high level patching, the application should avoid using JSONP altogether, as it inherently executes returned data as JavaScript and cannot be safely protected by CSP. Instead, the server should return pure JSON data and fetch it using modern APIs such as fetch() or XMLHttpRequest, which do not involve dynamic script execution. Additionally, same-origin endpoints like jsonp.php must not generate executable code or accept user-controlled callback parameters. By ensuring that all executable JavaScript is static, trusted, and served only as .js files, and that data endpoints return non-executable content, the script-src 'self' policy becomes effective and prevents attackers from injecting or executing malicious code.
+\noindent \textbf{Patching:} For high level patching, the application should avoid using JSONP altogether, as it inherently executes returned data as JavaScript and cannot be safely protected by CSP. Instead, the server should return pure JSON data and fetch it using modern APIs such as fetch() or XMLHttpRequest, which do not involve dynamic script execution. Additionally, same-origin endpoints like jsonp.php must not generate executable code or accept user-controlled callback parameters. By ensuring that all executable JavaScript is static, trusted, and served only as .js files, and that data endpoints return non-executable content, the script-src 'self' policy becomes effective and prevents attackers from injecting or executing malicious code.

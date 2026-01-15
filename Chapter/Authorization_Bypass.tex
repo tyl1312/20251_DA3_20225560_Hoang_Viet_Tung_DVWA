@@ -199,12 +199,11 @@ instead at the dvwaHtmlEcho function in:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/auth_res_low.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/auth_res_low.png} 
 \end{figure}
 \noindent Here, we can see that we still have access to the page.
 
-\noindent \textbf{Patching:}
-\noindent To fix this issue, we need to ensure that access control is enforced on the server side, not just in the UI. This involves checking the user's role allowing access to the page. If the user is not an admin, they should be denied access with an HTTP 403 (Forbidden) status.
+\noindent \textbf{Patching:} To fix this issue, we need to ensure that access control is enforced on the server side, not just in the UI. This involves checking the user's role allowing access to the page. If the user is not an admin, they should be denied access with an HTTP 403 (Forbidden) status.
 \begin{lstlisting}
 <?php
 if (dvwaCurrentUser() != "admin") {
@@ -241,11 +240,10 @@ if (dvwaCurrentUser() != "admin") {
 \noindent Looking at the code, we notice that the page is now restricted to only admin user now. Any non-admin user trying to access the web page will get an "Unauthorised" message. However, the application suggests we visit two URL: vulnerabilities/authbypass/get\_user\_data.php and vulnerabilities/authbypass/change\_user\_details.php. After trying to access the former, we find out that now we can view user details but in JSON format. This suggests that user gordonb can still view user data despite not having authorisation
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/auth_med2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/auth_med2.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent The patching method used for low level can be applied here but for every endpoint. This helps protect not only the main page but also helper scripts such as get\_user\_data.php and change\_user\_details.php. If these endpoints are intended for admin only, enforce dvwaCurrentUser() == "admin" inside each script. 
+\noindent \textbf{Patching:} The patching method used for low level can be applied here but for every endpoint. This helps protect not only the main page but also helper scripts such as get\_user\_data.php and change\_user\_details.php. If these endpoints are intended for admin only, enforce dvwaCurrentUser() == "admin" inside each script. 
 
 \newpage
 \subsection{High level}
@@ -272,26 +270,28 @@ if (dvwaCurrentUser() != "admin") {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/auth_high1.png}
+  \includegraphics[width=0.85\linewidth]{Figure/auth_high1.png}
 \end{figure}
 \noindent Moreover, when we try to access vulnerabilities/authbypass/change\_user\_details.php, it show a error message indicating only POST request is allowed.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/auth_high2.png}
+  \includegraphics[width=0.85\linewidth]{Figure/auth_high2.png}
 \end{figure}
 \noindent Therefore, we would change from GET method to POST in Burp Suite. However, now we get another error suggesting invalid format.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/auth_high3.png}
+  \includegraphics[width=0.85\linewidth]{Figure/auth_high3.png}
 \end{figure}
 \noindent As a result, we need to use the correct JSON format that we have seen in vulnerabilities/authbypass/get\_user\_data.php which is {"id":1,"username":"Bob","last\_name":"Bob"} to our POST request and send.
 Now, we receive a 200 OK status with message suggesting success.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/auth_high4.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/auth_high4.png} 
 \end{figure}
-
-\noindent \textbf{Patching:}
-Like in medium level, we need to enforce access control checks on every related endpoint, including change\_user\_details.php. If these endpoints are intended for admin only, enforce dvwaCurrentUser() == "admin" inside each script.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{Figure/auth_high5.png} 
+\end{figure}
+\noindent \textbf{Patching:}Like in medium level, we need to enforce access control checks on every related endpoint, including change\_user\_details.php. If these endpoints are intended for admin only, enforce dvwaCurrentUser() == "admin" inside each script.

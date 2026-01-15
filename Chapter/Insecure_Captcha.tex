@@ -1,7 +1,7 @@
 \subsection{Overview}
-\noindent CAPTCHA is a program that can tell whether its user is a human or a computer. CAPTCHAs are used by many websites to prevent abuse from "bots", or automated programs usually written to generate spam. No computer program can read distorted text as well as humans can, so bots cannot navigate sites protected by CAPTCHAs.
+\noindent Captcha is a program that can tell whether its user is a human or a computer. Captchas are used by many websites to prevent abuse from "bots", or automated programs usually written to generate spam. No computer program can read distorted text as well as humans can, so bots cannot navigate sites protected by Captchas.
 
-\noindent CAPTCHAs are often used to protect sensitive functionality from automated bots. Such functionality typically includes user registration and changes, password changes, and posting content. In this example, the CAPTCHA is guarding the change password functionality for the user account. This provides limited protection from CSRF attacks as well as automated bot guessing.
+\noindent Captchas are often used to protect sensitive functionality from automated bots. Such functionality typically includes user registration and changes, password changes, and posting content. In this example, the Captcha is guarding the change password functionality for the user account. This provides limited protection from CSRF attacks as well as automated bot guessing.
 
 \noindent \textbf{Objective:} Change the current user's password in a automated manner.
 
@@ -11,32 +11,32 @@
 <?php
 
 if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '1' ) ) {
-    // Hide the CAPTCHA form
+    // Hide the Captcha form
     $hide_form = true;
 
     // Get input
     $pass_new  = $_POST[ 'password_new' ];
     $pass_conf = $_POST[ 'password_conf' ];
 
-    // Check CAPTCHA from 3rd party
-    $resp = recaptcha_check_answer(
-        $_DVWA[ 'recaptcha_private_key'],
-        $_POST['g-recaptcha-response']
+    // Check Captcha from 3rd party
+    $resp = reCaptcha_check_answer(
+        $_DVWA[ 'reCaptcha_private_key'],
+        $_POST['g-reCaptcha-response']
     );
 
-    // Did the CAPTCHA fail?
+    // Did the Captcha fail?
     if( !$resp ) {
-        // What happens when the CAPTCHA was entered incorrectly
-        $html     .= "<pre><br />The CAPTCHA was incorrect. Please try again.</pre>";
+        // What happens when the Captcha was entered incorrectly
+        $html     .= "<pre><br />The Captcha was incorrect. Please try again.</pre>";
         $hide_form = false;
         return;
     }
     else {
-        // CAPTCHA was correct. Do both new passwords match?
+        // Captcha was correct. Do both new passwords match?
         if( $pass_new == $pass_conf ) {
             // Show next stage for the user
             echo "
-                <pre><br />You passed the CAPTCHA! Click the button to confirm your changes.<br /></pre>
+                <pre><br />You passed the Captcha! Click the button to confirm your changes.<br /></pre>
                 <form action=\"#\" method=\"POST\">
                     <input type=\"hidden\" name=\"step\" value=\"2\" />
                     <input type=\"hidden\" name=\"password_new\" value=\"{$pass_new}\" />
@@ -53,7 +53,7 @@ if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '1' ) ) {
 }
 
 if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '2' ) ) {
-    // Hide the CAPTCHA form
+    // Hide the Captcha form
     $hide_form = true;
 
     // Get input
@@ -84,60 +84,71 @@ if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '2' ) ) {
 
 ?>
 \end{lstlisting}
-
-\noindent The code implements a two-step password change process protected by a CAPTCHA. In the first step, when the user submits the form with step = 1, the code collects the new password and confirmation password, then verifies a CAPTCHA response using a third-party service. If the CAPTCHA is incorrect, the request is rejected and the form is shown again. If the CAPTCHA is correct and both passwords match, the user is shown a second confirmation form with the password values carried forward as hidden fields.
+\noindent The code implements a two-step password change process protected by a Captcha. In the first step, when the user submits the form with step = 1, the code collects the new password and confirmation password, then verifies a Captcha response using a third-party service. If the Captcha is incorrect, the request is rejected and the form is shown again. If the Captcha is correct and both passwords match, the user is shown a second confirmation form with the password values carried forward as hidden fields.
 
 \noindent In the second step, when the user submits the confirmation form with step = 2, the code checks whether the two passwords match. If they do, the new password is sanitized, hashed using MD5, and updated in the database. A success message is then displayed. If the passwords do not match, an error message is shown instead. 
 
-\noindent The weakness of this CAPTCHA implementation is that it can be easily bypassed. By capturing an unsuccessful request in Burp Suite and modifying the step parameter to 2, we can trick the application into assuming that the CAPTCHA has already been successfully completed, thereby bypassing the CAPTCHA verification entirely.
+\noindent The weakness of this Captcha implementation is that it can be easily bypassed. By capturing an unsuccessful request in Burp Suite and modifying the step parameter to 2, we can trick the application into assuming that the Captcha has already been successfully completed, thereby bypassing the Captcha verification entirely.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/cap_low1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/cap_low1.png} 
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/cap_low2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/cap_low2.png} 
 \end{figure}
+\noindent Here, in the photo, it is clear that we haven't done the Captcha since the g-reCaptcha-response value is nothing but we still get the successful "password changed" message in response.
+\noindent \textbf{Patching:} Instead of relying on client-side parameters such as step value, the result of Captcha verification must be stored on the server side using a session variable. After the Captcha is validated in step 1, the server should record this state in the user’s session. Step 2 must then explicitly verify this server-side flag before allowing the password change to proceed.
+\noindent For example, we can modify the code as follow:
+\begin{lstlisting}
+session_start();
 
-\noindent Here, in the photo, it is clear that we haven't done the captcha since the g-recaptcha-response value is nothing but we still get the successful "password changed" message in response.
+// After successful Captcha verification
+$_SESSION['passed_Captcha'] = true;
 
+// Before processing step 2
+if (!isset($_SESSION['passed_Captcha']) || $_SESSION['passed_Captcha'] !== true) {
+die("Captcha verification required.");
+}
+\end{lstlisting}
+\noindent Here, we add a server-side session variable to check whether the Captcha has been successfully completed. This variable is set immediately after the Captcha is verified in step 1, and later checked in step 2 before the password update logic is executed. With this approach, modifying request parameters such as step to skip Captcha verification no longer allows the attacker to bypass the protection.
 \newpage
 \subsection{Medium level}
 \begin{lstlisting}
 <?php
 
 if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '1' ) ) {
-    // Hide the CAPTCHA form
+    // Hide the Captcha form
     $hide_form = true;
 
     // Get input
     $pass_new  = $_POST[ 'password_new' ];
     $pass_conf = $_POST[ 'password_conf' ];
 
-    // Check CAPTCHA from 3rd party
-    $resp = recaptcha_check_answer(
-        $_DVWA[ 'recaptcha_private_key' ],
-        $_POST['g-recaptcha-response']
+    // Check Captcha from 3rd party
+    $resp = reCaptcha_check_answer(
+        $_DVWA[ 'reCaptcha_private_key' ],
+        $_POST['g-reCaptcha-response']
     );
 
-    // Did the CAPTCHA fail?
+    // Did the Captcha fail?
     if( !$resp ) {
-        // What happens when the CAPTCHA was entered incorrectly
-        $html     .= "<pre><br />The CAPTCHA was incorrect. Please try again.</pre>";
+        // What happens when the Captcha was entered incorrectly
+        $html     .= "<pre><br />The Captcha was incorrect. Please try again.</pre>";
         $hide_form = false;
         return;
     }
     else {
-        // CAPTCHA was correct. Do both new passwords match?
+        // Captcha was correct. Do both new passwords match?
         if( $pass_new == $pass_conf ) {
             // Show next stage for the user
             echo "
-                <pre><br />You passed the CAPTCHA! Click the button to confirm your changes.<br /></pre>
+                <pre><br />You passed the Captcha! Click the button to confirm your changes.<br /></pre>
                 <form action=\"#\" method=\"POST\">
                     <input type=\"hidden\" name=\"step\" value=\"2\" />
                     <input type=\"hidden\" name=\"password_new\" value=\"{$pass_new}\" />
                     <input type=\"hidden\" name=\"password_conf\" value=\"{$pass_conf}\" />
-                    <input type=\"hidden\" name=\"passed_captcha\" value=\"true\" />
+                    <input type=\"hidden\" name=\"passed_Captcha\" value=\"true\" />
                     <input type=\"submit\" name=\"Change\" value=\"Change\" />
                 </form>";
         }
@@ -150,7 +161,7 @@ if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '1' ) ) {
 }
 
 if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '2' ) ) {
-    // Hide the CAPTCHA form
+    // Hide the Captcha form
     $hide_form = true;
 
     // Get input
@@ -158,8 +169,8 @@ if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '2' ) ) {
     $pass_conf = $_POST[ 'password_conf' ];
 
     // Check to see if they did stage 1
-    if( !$_POST[ 'passed_captcha' ] ) {
-        $html     .= "<pre><br />You have not passed the CAPTCHA.</pre>";
+    if( !$_POST[ 'passed_Captcha' ] ) {
+        $html     .= "<pre><br />You have not passed the Captcha.</pre>";
         $hide_form = false;
         return;
     }
@@ -188,15 +199,17 @@ if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '2' ) ) {
 
 ?>
 \end{lstlisting}
-\noindent Compared to the previous level, the overall flow remains largely the same, including the two-step process and database update logic. The key difference in this version is the addition of a passed\_captcha flag, which is used to indicate that the user has successfully completed the CAPTCHA in step 1. This flag is passed to step 2 and is checked before  the password change is allowed to proceed. However, the value is still controlled by the client and can be modified, meaning the CAPTCHA protection can still be bypassed. Therefore, We can still do the same as the last level: capture an unsuccesfuly request, modify step parameter to 2 and passed\_captcha parameter to true.
+\noindent Compared to the previous level, the overall flow remains largely the same, including the two-step process and database update logic. The key difference in this version is the addition of a passed\_Captcha flag, which is used to indicate that the user has successfully completed the Captcha in step 1. This flag is passed to step 2 and is checked before  the password change is allowed to proceed. However, the value is still controlled by the client and can be modified, meaning the Captcha protection can still be bypassed. Therefore, We can still do the same as the last level: capture a failed request, modify step parameter to 2 and passed\_Captcha parameter to true.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/cap_med1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/cap_med1.png} 
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/cap_med2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/cap_med2.png} 
 \end{figure}
+
+\noindent \textbf{Patching:} The application has already used a passed\_Captcha flag to indicate whether the  Captcha has been completed, but the issue is that this flag is stored on the client-side  can be easily modified by an attacker. Therefore, similar to low level patching, we can simply move this variable to server-side session. This ensures the Captcha state cannot be tampered with.
 
 \newpage
 \subsection{High level}
@@ -204,27 +217,27 @@ if( isset( $_POST[ 'Change' ] ) && ( $_POST[ 'step' ] == '2' ) ) {
 <?php
 
 if( isset( $_POST[ 'Change' ] ) ) {
-    // Hide the CAPTCHA form
+    // Hide the Captcha form
     $hide_form = true;
 
     // Get input
     $pass_new  = $_POST[ 'password_new' ];
     $pass_conf = $_POST[ 'password_conf' ];
 
-    // Check CAPTCHA from 3rd party
-    $resp = recaptcha_check_answer(
-        $_DVWA[ 'recaptcha_private_key' ],
-        $_POST['g-recaptcha-response']
+    // Check Captcha from 3rd party
+    $resp = reCaptcha_check_answer(
+        $_DVWA[ 'reCaptcha_private_key' ],
+        $_POST['g-reCaptcha-response']
     );
 
     if (
         $resp || 
         (
-            $_POST[ 'g-recaptcha-response' ] == 'hidd3n_valu3'
-            && $_SERVER[ 'HTTP_USER_AGENT' ] == 'reCAPTCHA'
+            $_POST[ 'g-reCaptcha-response' ] == 'hidd3n_valu3'
+            && $_SERVER[ 'HTTP_USER_AGENT' ] == 'reCaptcha'
         )
     ){
-        // CAPTCHA was correct. Do both new passwords match?
+        // Captcha was correct. Do both new passwords match?
         if ($pass_new == $pass_conf) {
             $pass_new = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass_new ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
             $pass_new = md5( $pass_new );
@@ -243,8 +256,8 @@ if( isset( $_POST[ 'Change' ] ) ) {
         }
 
     } else {
-        // What happens when the CAPTCHA was entered incorrectly
-        $html     .= "<pre><br />The CAPTCHA was incorrect. Please try again.</pre>";
+        // What happens when the Captcha was entered incorrectly
+        $html     .= "<pre><br />The Captcha was incorrect. Please try again.</pre>";
         $hide_form = false;
         return;
     }
@@ -258,18 +271,20 @@ generateSessionToken();
 ?>
 \end{lstlisting}
 
-\noindent In high level, the password update logic remains largely unchanged but is now executed in a single step. The key difference lies in the CAPTCHA validation: besides accepting a legitimate reCAPTCHA response, the code includes a hard-coded bypass that allows the check to pass when the User-Agent is set to reCAPTCHA and the g-recaptcha-response value is hidd3n\_valu3.
+\noindent In high level, the password update logic remains largely unchanged but is now executed in a single step. The key difference lies in the Captcha validation: besides accepting a legitimate reCaptcha response, the code includes a hard-coded bypass that allows the check to pass when the User-Agent is set to reCaptcha and the g-reCaptcha-response value is hidd3n\_valu3.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/captcha4.png}
+  \includegraphics[width=0.85\linewidth]{Figure/Captcha4.png}
 \end{figure}
 
-\noindent Therefore, we can use Burp Suite to modify the User-Agent value and g-recaptcha-response value as hinted.
+\noindent Therefore, we can use Burp Suite to modify the User-Agent value and g-reCaptcha-response value as hinted.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/cap_high1.png}
+  \includegraphics[width=0.85\linewidth]{Figure/cap_high1.png}
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/cap_high2.png}
+  \includegraphics[width=0.85\linewidth]{Figure/cap_high2.png}
 \end{figure}
+
+\noindent \textbf{Patching:} Since the only problem in this level is the hardcoded bypass condition, the fix is straightforward: completely remove it. By eliminating this and enforcing only server-verified Captcha results, the Captcha protection becomes effective and resistant to manipulation.

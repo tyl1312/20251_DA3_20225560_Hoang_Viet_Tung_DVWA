@@ -1,0 +1,16 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\section{Summary}
+This research examined common weaknesses in web applications by studying the Damn Vulnerable Web Application (DVWA). The project analyzed different security vulnerabilities across three difficulty levels. For each vulnerability, the research explored how the weakness was introduced, inspected relevant source code, demonstrated exploitation steps, and proposed patching methods to improve security. 
+
+In addition, the research implemented defensive rules using the ModSecurity Web Application Firewall. Experimental testing showed that carefully designed WAF rules can successfully detect and block many attacks before they reach the server.
+
+However, the findings also highlighted limitations. Certain weaknesses, such as session handling flaws, weak randomization, cryptographic issues, and logic vulnerabilities, cannot be mitigated by WAF configuration alone. These must be addressed through secure coding, proper validation, and careful system design. As a result, the research emphasizes that effective security requires a combination of understanding how attacks work and applying multiple layers of defense.
+
+\section{Suggestion for Future Works}
+There are several possible directions for future development. First, the ModSecurity rules implemented in this research could be expanded to cover more vulnerabilities, including business logic flaws and authentication weaknesses. In addition, automatic rule tuning or the use of machine learning techniques may improve detection accuracy while reducing false positives.
+
+Beyond ModSecurity, future work could evaluate and compare other Web Application Firewalls, such as NAXSI, OpenResty, or commercial cloud-based services. Testing the rules in larger and more realistic applications, instead of a training platform like DVWA, would also improve the practical value of the results. Finally, integrating secure coding tools, static analysis, or continuous monitoring systems would provide a more complete picture of web application protection in real environments.
+
+\end{document}

@@ -59,7 +59,7 @@ if (isset($_POST['Submit'])) {
 \noindent To mitigate the command injection vulnerability here, we will use PHP’s built-in function filter\_var() with the FILTER\_VALIDATE\_IP filter is used. This function checks whether the input is a valid IPv4 or IPv6 address and rejects any input that does not match the allowed IP address format. Moreover, escapeshellarg() is also used to safely escape the validated input before it is passed to the shell, ensuring it is treated strictly as a command argument and providing an additional layer of protection. For example, with escapeshellarg(), malicious input "127.0.0.1 ; ls" will transform into "ping -c 4 '127.0.0.1 ; ls'", causing the command to fail safely. In conclusion, combining strict input validation with proper argument escaping effectively prevents command injection attacks in this implementation.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/com_res_low.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/com_res_low.png} 
 \end{figure}
 
 \newpage
@@ -99,17 +99,16 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 \noindent For example, if we use our payload for low level version "127.0.0.1 ; ls" here, the application will replace ";" with empty strings make the command become "ping -c 4 127.0.0.1 ls" causing both ping and injected command failed.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/command_med2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/command_med2.png} 
 \end{figure}
 
 \noindent However, this blacklist mechanism is insufficient, as Linux and other Unix-like systems provide alternative operators that can still be abused for command injection, such as the pipe operator (|). The pipe allows the output of one command to be passed as input to another; although in this specific case a command like ls does not consume standard input and therefore ignores the piped data, it will still execute normally.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/com_res_med.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/com_res_med.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent To prevent command injection at the medium security level, the same patching approach used in the previous level is applied, as there are no significant changes in the overall program logic.
+\noindent \textbf{Patching:} To prevent command injection at the medium security level, the same patching approach used in the previous level is applied, as there are no significant changes in the overall program logic.
 
 \newpage
 \subsection{High level}
@@ -153,9 +152,7 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 \noindent There is no significant change in the overall code flow, with only change is upgraded blacklist and a simple input sanitization. Firstly, when the user clicks the Submit button, the retrieved value is applied trim() to remove any extra spaces at the beginning or end of the input. Moreover, a much more extensive blacklist has been set up. Now more characters will be replaced with space including pipe from medium level. However, if we look more closely, we would realize that the pipe is only replaced if there is a space after it. However, in linux, the pipe, which is an operator, is still recognized even without spaces. As a result, we can try input "127.0.0.1 |ls" which will turn into "ping -c 4 127.0.0.1 |ls"  
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/com_res_high.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/com_res_high.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-
-\noindent For the high security level, the previously applied patching strategy is retained, since the application only introduces change in the blacklist instead of the program logic. As such, strict input validation and proper argument escaping remain effective in mitigating command injection vulnerabilities.
+\noindent \textbf{Patching:} For the high security level, the previously applied patching strategy is retained, since the application only introduces change in the blacklist instead of the program logic. As such, strict input validation and proper argument escaping remain effective in mitigating command injection vulnerabilities.

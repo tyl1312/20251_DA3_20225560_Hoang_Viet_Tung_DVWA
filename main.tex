@@ -190,18 +190,13 @@
 % \pagestyle{empty} % Header và footer rỗng
 \newpage
 \pagenumbering{gobble} % Xóa page numbering ở cuối trang
-\subfile{Chapter/0_2_Acknowledgment.tex}
-
-% \pagestyle{empty} % Header và footer rỗng
-\newpage
-\pagenumbering{gobble} % Xóa page numbering ở cuối trang
 \subfile{Chapter/0_3_Abstract.tex}
 
 
 % ===================================================
 % \pagestyle{empty} % Header và footer rỗng
 \newpage
-\pagenumbering{gobble} % Xóa page numbering ở cuối trang
+\pagenumbering{arabic} % Xóa page numbering ở cuối trang
 \renewcommand*\contentsname{TABLE OF CONTENTS}
 \titlecontents{chapter}
     [0.0cm]             % left margin
@@ -232,19 +227,6 @@
 
 \pagenumbering{roman}
 %Tạo danh mục hình vẽ.
-\renewcommand{\listfigurename}{LIST OF FIGURES}
-{\let\oldnumberline\numberline
-\renewcommand{\numberline}{Figure~\oldnumberline}
-\listoffigures} 
-% \phantomsection\addcontentsline{toc}{section}{\numberline {} DANH MỤC HÌNH VẼ}
-\newpage
-
-
- %Tạo danh mục bảng biểu.
-\renewcommand{\listtablename}{LIST OF TABLES}
-{\let\oldnumberline\numberline
-\renewcommand{\numberline}{Table~\oldnumberline}
-\listoftables}
 % \phantomsection\addcontentsline{toc}{section}{\numberline {} DANH MỤC BẢNG BIỂU}
 
 \glsaddall 
@@ -284,11 +266,10 @@
 \newpage
 \chapter{ModSecurity rules}
 \subfile{Chapter/ModSec_rules.tex}
+
 \newpage
-%\pagestyle{fancy} % Áp dụng header và footer
-\chapter*{SHORT NOTICES ON REFERENCE} %Kết luận và hướng phát triển}
-\label{chapter:reference}
-\subfile{Chapter/7_Reference}
+\chapter{Conclusion and future works}
+\subfile{Chapter/Conclusion.tex}
 
 % ===================================================
 \newpage
@@ -309,12 +290,5 @@
     {{\bfseries{\scshape} \thecontentslabel.\ }} % numbered format
     {}         % unnumbered format
     {\titlerule*[0.3pc]{.}\contentspage} 
-    
-\chapter{GRADUATION THESIS GUIDANCE}
-\subfile{Chapter/Appendix_A}
-
-\newpage
-\chapter{USE CASE DESCRIPTIONS}
-\subfile{Chapter/Appendix_B}
 
 \end{document}

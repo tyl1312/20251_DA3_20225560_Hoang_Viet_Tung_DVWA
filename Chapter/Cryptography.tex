@@ -133,14 +133,14 @@ Since the code uses XOR based encryption, it is easy to retrieve the key because
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/cryp1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/cryp1.png} 
 \end{figure}
 
 \noindent Then, we will use CyberChef to find the key. We will need to choose From Base64 to ensure that the ciphertext is decoded before XOR operation. Next, we will choose XOR option with key is the recently obtained plaintext and output type is UTF8.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/cryp2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/cryp2.png} 
 \end{figure}
 \noindent Here, we can see the result is "wachtwoord" repeating itself. Now that we have the key, we can use it to decode the intercepted message and log in.
 

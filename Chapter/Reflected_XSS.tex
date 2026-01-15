@@ -22,11 +22,10 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
 \noindent The code then checks whether the name parameter exists in the \$\_GET array and is not null. If satisfied, the value of \$\_GET['name'] is directly concatenated into the HTML output and displayed to the user. We can see that user input is directly echoed without sanitization. As a result, any input supplied by the user is reflected directly into the web page. For example, if we enter "<script>alert(1)</script>", it will be rendered as "<pre>Hello <script>alert(1)</script></pre>". The browser will then interpret and execute the injected JavaScript, causing a popup box displaying the number 1.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss2_res.png}
+  \includegraphics[width=0.85\linewidth]{Figure/xss2_res.png}
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent Similar to Stored XSS, we can mitigate the vulnerability here with output encoding. Therefore, we will utilize htmlspecialchars() to encode special HTML characters into their corresponding entities before rendering them in the browser.
+\noindent \textbf{Patching:} Similar to Stored XSS, we can mitigate the vulnerability here with output encoding. Therefore, we will utilize htmlspecialchars() to encode special HTML characters into their corresponding entities before rendering them in the browser.
 \begin{lstlisting}
 $name = htmlspecialchars($name);
 \end{lstlisting}
@@ -54,11 +53,10 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
 \noindent As a result, the filter can be bypassed using alternative payloads. For example, injecting <svg onload=alert(1)> will still execute JavaScript when the page is rendered, demonstrating that the application remains vulnerable to reflected XSS despite the added filtering step.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss2_res2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss2_res2.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent Since the program logic remains unchanged, we can use the same method as in the low level: output encoding using htmlspecialchars(). 
+\noindent \textbf{Patching:}  Since the program logic remains unchanged, we can use the same method as in the low level: output encoding using htmlspecialchars(). 
 \begin{lstlisting}
 $name = htmlspecialchars($name);
 \end{lstlisting}
@@ -86,11 +84,10 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
 \noindent Here, it attempts to remove <script> tags and any obfuscated or mixed casing variation of it. However, like we say for the previous level, there are other ways to exploit XSS. As a result, for this level, we will use <svg onload=alert(1)> as our payload again.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/xss2_res2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/xss2_res2.png} 
 \end{figure}
 
-\noindent \textbf{Patching:}
-\noindent For the high level, we still reuse the same patching strategy as previous levels: output encoding using htmlspecialchars(). Regex-based filtering can be bypassed by other tags and event handlers, but encoding prevents all HTML from being interpreted.
+\noindent \textbf{Patching:} For the high level, we still reuse the same patching strategy as previous levels: output encoding using htmlspecialchars(). Regex-based filtering can be bypassed by other tags and event handlers, but encoding prevents all HTML from being interpreted.
 \begin{lstlisting}
 $name = htmlspecialchars($name);
 \end{lstlisting}

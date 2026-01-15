@@ -74,13 +74,13 @@ if( isset( $_GET[ 'Submit' ] ) ) {
 \noindent The application is vulnerable to SQL injection since the input is embedded directly inside single quotes without proper sanitization. Because of that, the input is treated as SQL code meaning that we can inject additional SQL logic to the original query. For instance, supplying the payload a' OR 1=1\# modifies the query so that the condition always evaluates to true. As a result, the application responds with “User ID exists in the database” even though the input is not a valid numeric id.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/sqlib1.png}
+  \includegraphics[width=0.85\linewidth]{Figure/sqlib1.png}
 \end{figure}
 \noindent To determine the database name in a blind SQL-injection assessment, the usual first step is to find out the length of the value returned by the database() function. To do that, we would try payload 
 "1' and length(database())=x\#" in which value of x will increment from 1 by 1 until it makes the applications behave differently. Then we will know the length of the database name is x-1. Summarizing the process, we find out that the database name has 4 letters.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/sqlib_length.png}
+  \includegraphics[width=0.85\linewidth]{Figure/sqlib_length.png}
 \end{figure}
 
 \noindent Since there are only 4 letters, it is possible for us to brute force for each of them. To do that, first we need a common structure for our test input which is "1' AND SUBSTRING(database(), x1, 1) = 'x2'\#" where x1 is the position of the letter and x2 is its value. This payload lets us find out whether a specific letter in database name has the same value as tested. To automate the process, we will use Burp Intruder with Cluster bomb attacker. We will test every letter in the alphabet for all 4 positions.
@@ -90,8 +90,7 @@ if( isset( $_GET[ 'Submit' ] ) ) {
 \end{figure}
 \noindent Here, we see that only 4 request with status 200 OK. From that, we conclude that the name of the database is "dvwa"
 
-\noindent \textbf{Patching:}
-\noindent For blind SQL injection, we apply the same patching method as SQL injection: stop concatenating user input into SQL queries and use prepared statements.
+\noindent \textbf{Patching:} For blind SQL injection, we apply the same patching method as SQL injection: stop concatenating user input into SQL queries and use prepared statements.
 
 \begin{lstlisting}
 $stmt = mysqli_prepare($conn, "SELECT first_name, last_name FROM users WHERE user_id = ?");
@@ -168,16 +167,15 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/sqlib_med1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqlib_med1.png} 
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/sqlib_med2.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqlib_med2.png} 
 \end{figure}
 \noindent Here, we notice that the browser is returning "User ID exists in the database" suggesting that the payload has succeeded. Therefore, with the brute force part, we can use the same payload as the low level but remember to drop the first '
 
-\noindent \textbf{Patching:}
-\noindent Since the program logic remains unchanged, we can apply the same patching method as in the low level: prepared statements. This ensures that user input is never directly concatenated into SQL queries, effectively mitigating SQL injection vulnerabilities.
+\noindent \textbf{Patching:} Since the program logic remains unchanged, we can apply the same patching method as in the low level: prepared statements. This ensures that user input is never directly concatenated into SQL queries, effectively mitigating SQL injection vulnerabilities.
 
 \subsection{High level}
 \begin{lstlisting}
@@ -251,9 +249,8 @@ if( isset( $_COOKIE[ 'id' ] ) ) {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{Figure/sqlib_high1.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/sqlib_high1.png} 
 \end{figure}
 \noindent As you can see, the result is still the same as the low level indicating that we can perform SQL blind injection on the application. For the brute force part, we will do the same as the low level as now we have proved that our payload is still working normally here.
 
-\noindent \textbf{Patching:}
-\noindent For the high level, we apply the same patching strategy: prepared statements. Although the input is retrieved from a cookie, cookies are stored on the user’s browser and can be modified by an attacker. Therefore, this data cannot be trusted and must not be directly inserted into SQL queries. Prepared statements will prevent SQL injection by ensuring that user input is treated only as data, not as executable SQL code.
+\noindent \textbf{Patching:} For the high level, we apply the same patching strategy: prepared statements. Although the input is retrieved from a cookie, cookies are stored on the user’s browser and can be modified by an attacker. Therefore, this data cannot be trusted and must not be directly inserted into SQL queries. Prepared statements will prevent SQL injection by ensuring that user input is treated only as data, not as executable SQL code.

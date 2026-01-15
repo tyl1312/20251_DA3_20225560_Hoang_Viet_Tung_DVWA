@@ -41,8 +41,7 @@ if( isset( $_GET[ 'Change' ] ) ) {
 
 \noindent If the database update succeeds, a message is shown to confirm that the password was changed. If the two passwords do not match, the else block is executed instead and an error message is shown informing the user of the mismatch. After trying to change the password, we can see that the request is handled using the GET method, as we saw earlier in the source code, with the parameters included directly in the URL.
 
-\noindent \textbf{Patching:}
-\noindent For CSRF patching, we will use a technique called Anti-CSRF token, also known as CSRF token, for every state-changing request and verify it on the server. DVWA already introduces this token-based protection in the Brute Force module at High level, and the same mechanism can be applied here.
+\noindent \textbf{Patching:} For CSRF patching, we will use a technique called Anti-CSRF token, also known as CSRF token, for every state-changing request and verify it on the server. DVWA already introduces this token-based protection in the Brute Force module at High level, and the same mechanism can be applied here.
 
 \noindent A CSRF token is a random value bound to the user session and often refreshed per request. The client must submit it together with a sensitive action such as a password change. Because third-party website cannot read this token from another origin due to the same-origin policy, an attacker can trick the browser into sending a request but cannot include a valid token value, so the server rejects the forged request.
 
@@ -99,16 +98,15 @@ if( isset( $_GET[ 'Change' ] ) ) {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csrf_invalid.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/csrf_invalid.png} 
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csrf_valid.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/csrf_valid.png} 
 \end{figure}
 \noindent So our approach will be to intercept invalid request and inject a correct Referer header into it. As a result, we can make it looks like our request comes from a legitimate source, helping us bypass the security check.
 
-\noindent \textbf{Patching:}
-\noindent We use the same method as in the low level: anti-CSRF tokens validated on the server for every password change. Referer header checks are not reliable because headers can be missing or spoofed in some scenarios, so they should only be treated as defense-in-depth. The core protection is still token validation.
+\noindent \textbf{Patching:} We use the same method as in the low level: anti-CSRF tokens validated on the server for every password change. Referer header checks are not reliable because headers can be missing or spoofed in some scenarios, so they should only be treated as defense-in-depth. The core protection is still token validation.
 
 \newpage
 \subsection{High level}
@@ -194,10 +192,9 @@ generateSessionToken();
 \noindent To solve this level, we need to craft a request with valid token value. Fortunately, after further analysis, we see that token is transmitted along with the request. 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{Figure/csrf_high3.png} 
+  \includegraphics[width=0.85\linewidth]{Figure/csrf_high3.png} 
 \end{figure}
 
 \noindent As a result, we can copy its value and attach it in our malicious request.
 
-\noindent \textbf{Patching:}
-\noindent For the high level, the token-based patching strategy is already implemented: the application validates an Anti-CSRF token using checkToken() and refreshes it using generateSessionToken(). 
+\noindent \textbf{Patching:} For the high level, the token-based patching strategy is already implemented: the application validates an Anti-CSRF token using checkToken() and refreshes it using generateSessionToken(). 
